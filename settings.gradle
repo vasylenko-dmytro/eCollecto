@@ -1,0 +1,4 @@
+rootProject.name = "eCollecto"
+
+include("backend:ecollecto-backend")
+include("frontend:ecollecto-ui")

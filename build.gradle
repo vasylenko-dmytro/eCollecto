@@ -1,0 +1,24 @@
+plugins {
+    id("base")
+}
+
+allprojects {
+    group = "com.vasylenko"
+    version = "0.1.0-SNAPSHOT"
+}
+
+subprojects {
+    repositories {
+        mavenCentral()
+    }
+}
+
+tasks.register("devBackend") {
+    group = "application"
+    dependsOn(":backend:ecollecto-backend:bootRun")
+}
+
+tasks.register("devFrontend") {
+    group = "application"
+    dependsOn(":frontend:ecollecto-ui:npmDev")
+}

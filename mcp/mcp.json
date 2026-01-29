@@ -1,0 +1,9 @@
+{
+  "name": "eCollecto",
+  "server": {
+    "type": "spring-ai-mcp",
+    "command": "./gradlew",
+    "args": ["bootRun"],
+    "workingDirectory": "."
+  }
+}

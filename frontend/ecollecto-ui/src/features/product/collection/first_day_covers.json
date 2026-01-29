@@ -1,0 +1,156 @@
+[
+  {
+    "_id": "fdc_pm914_e803",
+    "name": "Trident",
+    "description": "",
+    "stampId": "s1974",
+    "designerId": "d19",
+    "postmark": {
+      "id": "pm914",
+      "sku": 914,
+      "image": "https://upload.wikimedia.org/wikipedia/commons/0/0c/Тризуб_-_First_day_postmark_in_Kyiv_%282022%29.jpg"
+    },
+    "envelope": {
+      "id": "e803",
+      "sku": 803,
+      "image": "https://upload.wikimedia.org/wikipedia/commons/c/c7/Тризуб_-_cover_%282022%29.jpg"
+    },
+    "release": {
+      "year": 2022,
+      "date": "2022-01-18",
+      "printQuantity": 2000
+    }
+  },
+  {
+    "_id": "fdc_pm915_e804",
+    "name": "Ninth definitive issue: Bohodukhiv",
+    "description": "",
+    "stampId": "s1975",
+    "designerId": "d17",
+    "postmark": {
+      "id": "pm915",
+      "sku": 915,
+      "image": "https://upload.wikimedia.org/wikipedia/commons/7/77/Coats_of_arms_of_cities%2C_towns_and_villages_of_Ukraine_-_First_day_postmark_in_Kyiv_%282022%29.jpg"
+    },
+    "envelope": {
+      "id": "e804",
+      "sku": 804,
+      "image": "https://upload.wikimedia.org/wikipedia/commons/f/fc/Ninth_issue_of_definitive_postage_stamps_-_First_day_cover_%28Postmark_Kyiv-01001%2C_21.01.2022%29.jpg"
+    },
+    "release": {
+      "year": 2022,
+      "date": "2022-01-21",
+      "printQuantity": 2000
+    }
+  },
+  {
+    "_id": "fdc_pm916_e803",
+    "name": "Beijing-2022",
+    "description": "",
+    "stampId": "s1976",
+    "designerId": "d19",
+    "postmark": {
+      "id": "pm916",
+      "sku": 916,
+      "image": "https://upload.wikimedia.org/wikipedia/commons/d/dc/Beijing-2022_-_First_day_postmark_in_Kyiv_%282022%29.jpg"
+    },
+    "envelope": {
+      "id": "e803",
+      "sku": 803,
+      "image": "https://upload.wikimedia.org/wikipedia/commons/e/e6/Beijing-2022_-_cover_%282022%29.jpg"
+    },
+    "release": {
+      "year": 2022,
+      "date": "2022-01-18",
+      "printQuantity": 2000
+    }
+  },
+  {
+    "_id": "fdc_pm922_e808",
+    "name": "Russian warship, go… !",
+    "description": "",
+    "stampId": "s1984",
+    "designerId": "d1",
+    "postmark": {
+      "id": "pm922",
+      "sku": 922,
+      "image": "https://upload.wikimedia.org/wikipedia/commons/6/69/Russian_warship%2C_go_fuck_yourself_-_First_day_postmark_in_Kyiv_%282022%29.png"
+    },
+    "envelope": {
+      "id": "e808",
+      "sku": 808,
+      "image": "https://upload.wikimedia.org/wikipedia/commons/9/95/Поштовий_конверт_«Русскій_воєнний_корабль%2C_іді…%21».jpg"
+    },
+    "release": {
+      "year": 2022,
+      "date": "2022-04-12",
+      "printQuantity": 60000
+    }
+  },
+  {
+    "_id": "fdc_pm923_e809",
+    "name": "Russian warship… THAT'S IT!",
+    "description": "",
+    "stampId": "s1986",
+    "designerId": "d1",
+    "postmark": {
+      "id": "pm923",
+      "sku": 923,
+      "image": null
+    },
+    "envelope": {
+      "id": "e809",
+      "sku": 809,
+      "image": "https://upload.wikimedia.org/wikipedia/commons/a/af/Конверт_«Русскій_воєнний_корабль…_ВСЬО%21»_зі_спецпогашенням.png"
+    },
+    "release": {
+      "year": 2022,
+      "date": "2022-01-23",
+      "printQuantity": 30000
+    }
+  },
+  {
+    "_id": "fdc_pm924_e810",
+    "name": "Ukrainian dream",
+    "description": "",
+    "stampId": "s1988",
+    "designerId": "d21",
+    "postmark": {
+      "id": "pm924",
+      "sku": 924,
+      "image": "https://upload.wikimedia.org/wikipedia/commons/0/0e/Ukrainian_dream_Premiere_jour_stamp.jpg"
+    },
+    "envelope": {
+      "id": "e810",
+      "sku": 810,
+      "image": "https://upload.wikimedia.org/wikipedia/commons/d/d1/Ukrainian_dream_2022_premiere_day_envelope_Sumy.jpg"
+    },
+    "release": {
+      "year": 2022,
+      "date": "2022-06-28",
+      "printQuantity": 30000
+    }
+  },
+  {
+    "_id": "fdc_pm935_e820",
+    "name": "Kherson is Ukraine!",
+    "description": "",
+    "stampId": "s2020",
+    "designerId": "d23",
+    "postmark": {
+      "id": "pm935",
+      "sku": 935,
+      "image": "https://upload.wikimedia.org/wikipedia/commons/4/47/ШПД_№935.png"
+    },
+    "envelope": {
+      "id": "e820",
+      "sku": 820,
+      "image": "https://upload.wikimedia.org/wikipedia/commons/1/18/КПД_%28Сб%29_№820.png"
+    },
+    "release": {
+      "year": 2022,
+      "date": "2022-12-09",
+      "printQuantity": 100000
+    }
+  }
+]

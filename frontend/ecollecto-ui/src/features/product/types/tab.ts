@@ -1,0 +1,1 @@
+export type Tab = 'desc' | 'specs' | 'ship';

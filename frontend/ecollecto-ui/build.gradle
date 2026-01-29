@@ -1,0 +1,39 @@
+plugins {
+    id("com.github.node-gradle.node") version "7.0.2"
+}
+
+import com.github.gradle.node.npm.task.NpmTask
+
+node {
+    version = "24.7.0"
+    npmVersion = "11.6.0"
+    download = true
+}
+
+tasks.register("npmDev", NpmTask) {
+    group = "frontend"
+    description = "Run Vite dev server"
+    dependsOn("npmInstall")
+    args = ["run", "dev"]
+}
+
+tasks.register("npmBuild", NpmTask) {
+    group = "frontend"
+    description = "TypeScript + Vite build"
+    dependsOn("npmInstall")
+    args = ["run", "build"]
+}
+
+tasks.register("npmLint", NpmTask) {
+    group = "frontend"
+    description = "Run ESLint"
+    dependsOn("npmInstall")
+    args = ["run", "lint"]
+}
+
+tasks.register("npmPreview", NpmTask) {
+    group = "frontend"
+    description = "Preview production build"
+    dependsOn("npmBuild")
+    args = ["run", "preview"]
+}
