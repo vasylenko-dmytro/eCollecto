@@ -194,11 +194,10 @@ gradle-app.setting
 # Cache of project
 .gradletasknamecache
 
-!/gradle/
-!/.idea/
-!/frontend/ecollecto-ui/.gradle/
-!/gradlew
-!/gradlew.bat
-!/gradle/wrapper/gradle-wrapper.jar
-
-!/gradle/wrapper/gradle-wrapper.properties
+/gradle/wrapper/gradle-wrapper.jar
+/gradle/wrapper/gradle-wrapper.properties
+/.idea/
+/gradle/
+/gradlew
+/gradlew.bat
+/frontend/ecollecto-ui/dist/
