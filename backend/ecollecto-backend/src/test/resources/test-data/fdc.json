@@ -1,0 +1,22 @@
+{
+  "_id": "fdc_pm914_e803",
+  "name": "Trident",
+  "description": "",
+  "stampId": "s1974",
+  "designerId": "d19",
+  "postmark": {
+    "id": "pm914",
+    "sku": 914,
+    "image": "https://upload.wikimedia.org/wikipedia/commons/0/0c/Тризуб_-_First_day_postmark_in_Kyiv_%282022%29.jpg"
+  },
+  "envelope": {
+    "id": "e803",
+    "sku": 803,
+    "image": "https://upload.wikimedia.org/wikipedia/commons/c/c7/Тризуб_-_cover_%282022%29.jpg"
+  },
+  "release": {
+    "year": 2022,
+    "date": "2022-01-18",
+    "printQuantity": 2000
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "_id": "s1974",
+  "name": "Trident",
+  "description": "The stamp depicts the trident - the Small State Emblem of Ukraine. The design is based on the trident from the time of Volodymyr the Great, emphasizing the thousand-year continuity of Ukrainian statehood. This issue became a symbolic harbinger of the year when national symbols gained special significance.",
+  "stampSKU": 1974,
+  "meta": {
+    "denomination": {
+      "currency": "UAH",
+      "code": "V"
+    },
+    "series": "Trident",
+    "designerIds": [
+      "d19"
+    ],
+    "perforation": true,
+    "stampsPerPane": 12,
+    "themes": [],
+    "europa": false
+  },
+  "release": {
+    "date": "2022-01-21",
+    "year": 2022,
+    "printQuantity": 300000,
+    "isMassIssue": false,
+    "isAvailable": false
+  },
+  "images": {
+    "original": "https://commons.wikimedia.org/wiki/Special:FilePath/Stamp_of_Ukraine_s1974.jpg",
+    "small": "https://commons.wikimedia.org/wiki/Special:FilePath/Stamp_of_Ukraine_s1974.jpg?width=400",
+    "pane": "https://commons.wikimedia.org/wiki/Special:FilePath/Sheets_of_stamp_of_Ukraine%2C_2022%2C_Тризуб.jpg"
+  }
+}
