@@ -1,9 +1,24 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { Product } from '../types/product';
 import defaultImg from '@/assets/images/default.png';
 import {formatStampValue} from "../../../shared/utils/stampHelpers";
 
 export default function ProductGrid({ product }: { product: Product }) {
+  const [formattedDenomination, setFormattedDenomination] = useState("N/A");
+
+  useEffect(() => {
+    let active = true;
+
+    formatStampValue(product.meta.denomination).then((value) => {
+      if (active) {
+        setFormattedDenomination(value);
+      }
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [product.meta.denomination]);
 
   return (
     <div className="group flex flex-col">
@@ -41,7 +56,7 @@ export default function ProductGrid({ product }: { product: Product }) {
               </div>
 
               <div className="text-end">
-                <span className="text-black dark:text-white">{formatStampValue(product.meta.denomination)}</span>
+                <span className="text-black dark:text-white">{formattedDenomination}</span>
               </div>
             </div>
           </div>

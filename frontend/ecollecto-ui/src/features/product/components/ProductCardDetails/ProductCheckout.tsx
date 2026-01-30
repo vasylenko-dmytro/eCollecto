@@ -1,9 +1,24 @@
 import {formatStampValue} from "../../../../shared/utils/stampHelpers";
 import {Product} from "../../types/product";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
 export default function ProductCheckout({ product }: { product: Product }) {
   const [quantity, setQuantity] = useState(1);
+  const [formattedDenomination, setFormattedDenomination] = useState("N/A");
+
+  useEffect(() => {
+    let active = true;
+
+    formatStampValue(product.meta.denomination).then((value) => {
+      if (active) {
+        setFormattedDenomination(value);
+      }
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [product.meta.denomination]);
 
   return(
     <div className="md:col-span-3">
@@ -14,7 +29,7 @@ export default function ProductCheckout({ product }: { product: Product }) {
           </label>
           <button className="w-full p-4 bg-white dark:bg-neutral-900 border-2 border-blue-600 rounded-xl shadow-sm text-center">
                   <span className="text-xl font-black text-blue-600 dark:text-blue-400">
-                    {formatStampValue(product.meta.denomination)}
+                    {formattedDenomination}
                   </span>
           </button>
         </div>
