@@ -202,3 +202,4 @@ gradle-app.setting
 /gradlew.bat
 /frontend/ecollecto-ui/dist/
 /.vscode/
+/backend/ecollecto-backend/promts/
