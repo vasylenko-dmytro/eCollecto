@@ -1,71 +1,91 @@
-# eCollecto Frontend 🇺🇦
+# eCollecto UI
 
-A modern web application designed for Ukrainian postage stamp collectors, built with React 19 and Vite. The project allows users to browse stamp catalogs, explore "First Day" issues, and manage their personal philatelic collections.
+React + Vite frontend for browsing stamps, collections, and first-day covers.
 
-## 🚀 Tech Stack
+## Overview
+- Single-page app with React Router routes for home, product detail, collection, and first-day views.
+- Data loaded from the Java backend via REST endpoints (proxied in dev).
+- Tailwind CSS v4 for styling with a small custom CSS entrypoint.
 
-- **Framework:** [React 19](https://react.dev/)
-- **Build Tool:** [Vite 7](https://vitejs.dev/)
-- **Language:** [TypeScript](https://www.typescriptlang.org/)
-- **Styling:** [Tailwind CSS 4](https://tailwindcss.com/)
-- **Routing:** [React Router DOM 7](https://reactrouter.com/)
-- **Linting:** [ESLint](https://eslint.org/)
+## Tech Stack
+- React 19 + TypeScript
+- Vite 7 (dev server + build)
+- React Router 7
+- Tailwind CSS v4 (via `@tailwindcss/vite`)
 
-## 📂 Project Structure
-
-The project follows a **Feature-based architecture**, ensuring scalability and maintainability:
-
-```text
-src/
-├── app/              # Global providers, App.tsx, and entry point (main.tsx)
-├── assets/           # Static assets (logos, icons, images)
-├── features/         # Isolated functional modules
-│   └── product/      # Product (stamps) logic: components, types, and JSON data
-├── pages/            # Page-level components (Home, Collection, Product, etc.)
-├── shared/           # Global shared resources
-│   ├── layout/       # Header, Footer
-│   ├── ui/           # Base UI components (buttons, inputs)
-│   └── utils/        # Helper functions and utilities
-└── styles/           # Global styles (Tailwind, CSS variables)
+## Getting Started
+1) Install dependencies:
+```bash
+npm install
+```
+2) Run the dev server:
+```bash
+npm run dev
 ```
 
-## 🛠️ Key Features
+The dev server proxies API requests to `http://localhost:8080` (see `vite.config.ts`).
 
-- **Interactive Product Gallery:** High-quality stamp previews with an integrated Lightbox for zooming.
-- **Collection Management:** Advanced filtering and display of stamps by series, denomination, and designer.
-- **Responsive Design:** Optimized for seamless performance across mobile, tablet, and desktop devices.
-- **Data-Driven:** Efficiently renders content using structured local data (JSON).
+## Scripts
+- `npm run dev` - Start the Vite dev server.
+- `npm run build` - Type-check and build for production.
+- `npm run preview` - Serve the production build locally.
+- `npm run lint` - Run ESLint across the project.
 
-## 📦 Installation & Setup
+## Routes
+Defined in `src/app/App.tsx`:
+- `/` - Stamps listing (Home).
+- `/stamps/:id` - Stamp detail page.
+- `/collection` - Collection grid.
+- `/firstday` - First day of issue list.
+- `*` - Not found page.
 
-1. **Navigate to the frontend directory:**
-   ```bash
-   cd frontend/ecollecto-ui
-   ```
+## API Usage
+The UI fetches data from these endpoints:
+- `GET /api/stamps` - List stamps (used by Home and Collection pages).
+- `GET /api/stamp/:id` - Stamp detail (Product page).
+- `GET /api/first-day-covers` - First day covers list.
+- `GET /api/tariffs` - Postal tariff data used for denomination formatting.
 
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
+Development requests are proxied to `http://localhost:8080` by Vite.
 
-3. **Start the development server:**
-   ```bash
-   npm run dev
-   ```
-   The app will be available at `http://localhost:5173`.
+## Project Structure
+Full project map (large generated directories omitted: `.gradle/`, `node_modules/`, `build/`, `dist/`).
+```
+.
+├─ build.gradle           # Gradle wrapper config for the UI module
+├─ eslint.config.js       # ESLint config
+├─ index.html             # Vite HTML entrypoint
+├─ package.json           # NPM scripts and dependencies
+├─ tailwind.config.ts     # Tailwind config
+├─ tsconfig.json          # Base TS config
+├─ vite.config.ts         # Vite config + dev proxy
+└─ src/            # Application source code
+   ├─ app/         # App shell and routing
+   ├─ assets/      # Static assets (icons, images)
+   ├─ features/    # Domain features (product UI, schemas, types)
+   ├─ pages/       # Route-level pages
+   ├─ shared/      # Shared layout and utilities
+   └─ styles/      # Global styles (Tailwind entry)
+```
 
-## 📜 Available Scripts
+### Key Modules
+- `src/app/App.tsx` - Router and layout composition.
+- `src/shared/layout/Header.tsx` / `src/shared/layout/Footer.tsx` - Global navigation and footer.
+- `src/shared/utils/stampHelpers.ts` - Denomination formatting with tariff lookups.
+- `src/features/product/types` - Shared TypeScript domain types.
 
-- `npm run dev` — Starts the development server.
-- `npm run build` — Compiles the project for production (includes `tsc` type checking).
-- `npm run lint` — Runs ESLint to check for code quality issues.
-- `npm run preview` — Locally previews the production build.
+## Data Loading Patterns
+Pages use `useEffect` + `fetch` with `AbortController` to load data and handle:
+- Loading state
+- Error state
+- Cancellation on unmount
 
-## 🔧 Configuration
+## Styling
+Tailwind CSS is imported via `src/styles/index.css`:
+```css
+@import 'tailwindcss';
+```
 
-- **Tailwind CSS:** Configured via `tailwind.config.ts` using the modern `@tailwindcss/vite` approach.
-- **TypeScript:** Strict type checking is enforced via `tsconfig.json`.
-- **Path Aliases:** Convenient path aliases are set up (e.g., `@/` points to `src/`).
-
----
-*Created with passion for Ukrainian philately.*
+## Notes
+- No environment variables are required for local development.
+- The UI assumes the backend is running on port `8080` in development.
