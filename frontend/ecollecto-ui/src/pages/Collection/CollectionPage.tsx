@@ -1,13 +1,69 @@
 import StampImageCollectionGallery
   from "../../features/product/components/CollectionDetails/StampImageCollectionGallery";
 import type {Product} from "../../features/product/types/product";
-import productData from "../../features/product/data/productData.json";
 import {Link} from "react-router-dom";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import NoSearchResults from "../../features/product/components/NoSearchResults";
 
 export default function CollectionPage({searchTerm}: { searchTerm: string }) {
-  const collectionProducts: Product[] = productData;
+  const [collectionProducts, setCollectionProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    let isMounted = true;
+
+    const loadCollection = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const response = await fetch("/api/stamps", {signal: controller.signal});
+        if (!response.ok) {
+          throw new Error(`Failed to load collection (${response.status})`);
+        }
+        const data = await response.json() as Product[];
+        if (isMounted) {
+          setCollectionProducts(data);
+        }
+      } catch (err) {
+        if (err instanceof DOMException && err.name === "AbortError") {
+          return;
+        }
+        if (isMounted) {
+          setError(err instanceof Error ? err.message : "Failed to load collection");
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    void loadCollection();
+
+    return () => {
+      isMounted = false;
+      controller.abort();
+    };
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="max-w-340 px-4 sm:px-6 lg:px-8 py-6 lg:py-12 mx-auto">
+        <div className="text-sm text-gray-500">Loading collection...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-340 px-4 sm:px-6 lg:px-8 py-6 lg:py-12 mx-auto">
+        <div className="text-sm text-red-600">{error}</div>
+      </div>
+    );
+  }
+
   const filteredProducts = collectionProducts.filter((product) => {
     const term = searchTerm.toLowerCase();
     return (
