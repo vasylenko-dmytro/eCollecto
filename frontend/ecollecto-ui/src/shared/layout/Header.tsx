@@ -68,7 +68,6 @@ export default function Header({onSearch}: { onSearch: (term: string) => void })
             </a>
             <a className="p-2 text-sm text-gray-800 dark:text-neutral-200 hover:text-gray-500" href="/firstday">
               First day of issue
-              <sup className="ms-0.5 text-xs bg-blue-700 text-white py-0.5 px-1 rounded-lg">TBD</sup>
             </a>
             <a className="p-2 text-sm text-gray-800 dark:text-neutral-200 hover:text-gray-500" href="/collection">
               Collection
