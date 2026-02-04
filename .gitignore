@@ -203,3 +203,5 @@ gradle-app.setting
 /frontend/ecollecto-ui/dist/
 /.vscode/
 /backend/ecollecto-backend/promts/
+/.ai/
+/mcp/
