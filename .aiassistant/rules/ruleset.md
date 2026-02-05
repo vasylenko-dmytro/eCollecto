@@ -1,3 +1,7 @@
+---
+apply: always
+---
+
 # AI Assistant Rules
 
 ## Context-Awareness
