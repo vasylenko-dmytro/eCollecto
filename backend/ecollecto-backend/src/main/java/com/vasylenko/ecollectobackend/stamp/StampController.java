@@ -2,6 +2,13 @@ package com.vasylenko.ecollectobackend.stamp;
 
 import com.vasylenko.ecollectobackend.dto.ErrorResponse;
 import com.vasylenko.ecollectobackend.dto.StampDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -18,6 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api")
 @Slf4j
+@Tag(name = "Stamps", description = "Stamp lookup endpoints.")
 public class StampController {
 
     private final StampService stampService;
@@ -30,6 +38,13 @@ public class StampController {
      * Returns an empty list with a 200 OK status if no stamps are found in the system.
      */
     @GetMapping("/stamps")
+    @Operation(summary = "List stamps", description = "Retrieve all stamps.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Stamps retrieved.",
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = StampDto.class)))),
+            @ApiResponse(responseCode = "500", description = "Server error.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
     public ResponseEntity<List<StampDto>> getAllStamps() {
         List<StampDto> stamps = stampService.findAll();
         return ResponseEntity.ok(stamps);
@@ -44,6 +59,14 @@ public class StampController {
      * or a 404 Not Found status if no stamp exists with the given ID.
      */
     @GetMapping("/stamp/{id}")
+    @Operation(summary = "Get stamp", description = "Retrieve a stamp by id.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Stamp found.",
+                    content = @Content(schema = @Schema(implementation = StampDto.class))),
+            @ApiResponse(responseCode = "404", description = "Stamp not found."),
+            @ApiResponse(responseCode = "500", description = "Server error.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
     public ResponseEntity<StampDto> getStampById(@PathVariable String id) {
         return stampService.findById(id)
                 .map(ResponseEntity::ok)

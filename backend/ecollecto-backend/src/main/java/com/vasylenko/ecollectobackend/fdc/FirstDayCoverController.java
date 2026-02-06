@@ -2,6 +2,13 @@ package com.vasylenko.ecollectobackend.fdc;
 
 import com.vasylenko.ecollectobackend.dto.ErrorResponse;
 import com.vasylenko.ecollectobackend.dto.FirstDayCoverDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -18,6 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/first-day-covers")
 @Slf4j
+@Tag(name = "First Day Covers", description = "First day cover lookup endpoints.")
 public class FirstDayCoverController {
 
     private final FirstDayCoverService firstDayCoverService;
@@ -30,6 +38,13 @@ public class FirstDayCoverController {
      * Defaults to an empty list with a 200 OK status if no records are currently stored.
      */
     @GetMapping
+    @Operation(summary = "List first day covers", description = "Retrieve all first day covers.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "First day covers retrieved.",
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = FirstDayCoverDto.class)))),
+            @ApiResponse(responseCode = "500", description = "Server error.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
     public ResponseEntity<List<FirstDayCoverDto>> getAllFirstDayCovers() {
         List<FirstDayCoverDto> covers = firstDayCoverService.findAll();
         return ResponseEntity.ok(covers);
@@ -44,6 +59,14 @@ public class FirstDayCoverController {
      * otherwise, a 404 Not Found response.
      */
     @GetMapping("/{id}")
+    @Operation(summary = "Get first day cover", description = "Retrieve a first day cover by id.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "First day cover found.",
+                    content = @Content(schema = @Schema(implementation = FirstDayCoverDto.class))),
+            @ApiResponse(responseCode = "404", description = "First day cover not found."),
+            @ApiResponse(responseCode = "500", description = "Server error.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
     public ResponseEntity<FirstDayCoverDto> getFirstDayCoverById(@PathVariable String id) {
         return firstDayCoverService.findById(id)
                 .map(ResponseEntity::ok)

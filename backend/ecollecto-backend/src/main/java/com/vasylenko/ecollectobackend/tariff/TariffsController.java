@@ -3,6 +3,13 @@ package com.vasylenko.ecollectobackend.tariff;
 import com.vasylenko.ecollectobackend.common.model.Currency;
 import com.vasylenko.ecollectobackend.dto.ErrorResponse;
 import com.vasylenko.ecollectobackend.dto.TariffsDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -21,6 +28,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/api/tariffs")
 @Slf4j
+@Tag(name = "Tariffs", description = "Tariff lookup endpoints.")
 public class TariffsController {
 
     private final TariffsService service;
@@ -37,6 +45,13 @@ public class TariffsController {
      *         objects with tariff data
      */
     @GetMapping
+    @Operation(summary = "List tariffs", description = "Retrieve all tariffs.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Tariffs retrieved.",
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = TariffsDto.class)))),
+            @ApiResponse(responseCode = "500", description = "Server error.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
     public ResponseEntity<List<TariffsDto>> getAllTariffs() {
         List<TariffsDto> tariffs = service.findAll();
         return ResponseEntity.ok(tariffs);
@@ -53,6 +68,14 @@ public class TariffsController {
      * @return {@link ResponseEntity} containing a map of letter-to-tariff values
      */
     @GetMapping("/{year}/{currency}")
+    @Operation(summary = "List tariffs by currency", description = "Retrieve tariffs for a year and currency.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Tariffs retrieved.",
+                    content = @Content(schema = @Schema(implementation = Map.class))),
+            @ApiResponse(responseCode = "404", description = "Tariffs not found."),
+            @ApiResponse(responseCode = "500", description = "Server error.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
     public ResponseEntity<Map<String, Double>> getAllTariffsByCurrency(
             @PathVariable Integer year,
             @PathVariable Currency currency) {
@@ -82,6 +105,14 @@ public class TariffsController {
      *         if the tariff for the given parameters is not found
      */
     @GetMapping("/{year}/{currency}/{letter}")
+    @Operation(summary = "Get tariff", description = "Retrieve a single tariff by year, currency, and letter.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Tariff retrieved.",
+                    content = @Content(schema = @Schema(implementation = Double.class))),
+            @ApiResponse(responseCode = "404", description = "Tariff not found."),
+            @ApiResponse(responseCode = "500", description = "Server error.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
     public ResponseEntity<Double> getTariff(
             @PathVariable Integer year,
             @PathVariable Currency currency,
