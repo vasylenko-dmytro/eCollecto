@@ -205,3 +205,5 @@ gradle-app.setting
 /backend/ecollecto-backend/promts/
 /.ai/
 /mcp/
+/backend/ecollecto-backend/openapi.yaml
+/skills/
