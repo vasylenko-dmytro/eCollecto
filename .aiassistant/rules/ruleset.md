@@ -12,3 +12,6 @@ apply: always
 
 ## Vite Proxy
 - When creating new endpoints, keep in mind that the frontend expects them at the path `/api/*` thanks to the proxy in Vite.
+
+## Libraries
+- Do not downgrade Spring Boot, Gradle and Java versions.
