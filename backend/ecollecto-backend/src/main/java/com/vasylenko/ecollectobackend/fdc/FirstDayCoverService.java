@@ -2,6 +2,7 @@ package com.vasylenko.ecollectobackend.fdc;
 
 import com.vasylenko.ecollectobackend.dto.FirstDayCoverDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class FirstDayCoverService {
     private final FirstDayCoverRepository firstDayCoverRepository;
     private final com.vasylenko.ecollectobackend.designer.DesignerRepository designerRepository;

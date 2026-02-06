@@ -4,6 +4,7 @@ import com.vasylenko.ecollectobackend.common.model.Currency;
 import com.vasylenko.ecollectobackend.dto.ErrorResponse;
 import com.vasylenko.ecollectobackend.dto.TariffsDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/tariffs")
+@Slf4j
 public class TariffsController {
 
     private final TariffsService service;
@@ -57,7 +59,10 @@ public class TariffsController {
 
         return service.getTariffsByCurrency(year, currency)
                 .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseGet(() -> {
+                    log.warn("Tariffs not found for year: {} and currency: {}", year, currency);
+                    return ResponseEntity.notFound().build();
+                });
     }
 
     /**
@@ -84,7 +89,10 @@ public class TariffsController {
 
         return service.getTariffByLetter(year, currency, letter)
                 .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseGet(() -> {
+                    log.warn("Tariff not found for year: {}, currency: {}, letter: {}", year, currency, letter);
+                    return ResponseEntity.notFound().build();
+                });
     }
 
     /**

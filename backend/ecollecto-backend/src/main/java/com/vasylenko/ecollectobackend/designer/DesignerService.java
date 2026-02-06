@@ -2,6 +2,7 @@ package com.vasylenko.ecollectobackend.designer;
 
 import com.vasylenko.ecollectobackend.dto.DesignerDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class DesignerService {
     private final DesignerRepository designerRepository;
 
@@ -35,7 +37,11 @@ public class DesignerService {
      * @return an {@link Optional} containing the {@link DesignerDto} if found.
      */
     public Optional<DesignerDto> findById(String id) {
-        return designerRepository.findById(id).map(this::toDto);
+        Optional<DesignerDto> designer = designerRepository.findById(id).map(this::toDto);
+        if (designer.isEmpty()) {
+            log.warn("Designer with id {} not found", id);
+        }
+        return designer;
     }
 
     /**

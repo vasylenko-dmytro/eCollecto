@@ -3,6 +3,7 @@ package com.vasylenko.ecollectobackend.designer;
 import com.vasylenko.ecollectobackend.dto.DesignerDto;
 import com.vasylenko.ecollectobackend.dto.ErrorResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
+@Slf4j
 public class DesignerController {
 
     private final DesignerService designerService;
@@ -44,7 +46,10 @@ public class DesignerController {
     public ResponseEntity<DesignerDto> getDesignerById(@PathVariable String id) {
         return designerService.findById(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseGet(() -> {
+                    log.warn("Designer with id {} not found", id);
+                    return ResponseEntity.notFound().build();
+                });
     }
 
     /**
@@ -52,6 +57,7 @@ public class DesignerController {
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception e) {
+        log.error("An error occurred in DesignerController", e);
         ErrorResponse error = ErrorResponse.builder()
                 .message(e.getMessage())
                 .code("DESIGNER_ERROR")

@@ -3,6 +3,7 @@ package com.vasylenko.ecollectobackend.fdc;
 import com.vasylenko.ecollectobackend.dto.ErrorResponse;
 import com.vasylenko.ecollectobackend.dto.FirstDayCoverDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/first-day-covers")
+@Slf4j
 public class FirstDayCoverController {
 
     private final FirstDayCoverService firstDayCoverService;
@@ -45,7 +47,10 @@ public class FirstDayCoverController {
     public ResponseEntity<FirstDayCoverDto> getFirstDayCoverById(@PathVariable String id) {
         return firstDayCoverService.findById(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseGet(() -> {
+                    log.warn("First day cover with id {} not found", id);
+                    return ResponseEntity.notFound().build();
+                });
     }
 
     /**
@@ -53,6 +58,7 @@ public class FirstDayCoverController {
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception e) {
+        log.error("An error occurred in FirstDayCoverController", e);
         ErrorResponse error = ErrorResponse.builder()
                 .message(e.getMessage())
                 .code("FIRST_DAY_COVER_ERROR")

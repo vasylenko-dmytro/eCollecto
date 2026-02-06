@@ -4,6 +4,7 @@ import com.vasylenko.ecollectobackend.common.exception.NotFoundException;
 import com.vasylenko.ecollectobackend.common.model.Currency;
 import com.vasylenko.ecollectobackend.dto.TariffsDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class TariffsService {
     private final TariffsRepository repository;
 
@@ -40,8 +42,10 @@ public class TariffsService {
      */
     public TariffsDocument getByYear(Integer year) {
         return repository.findByYear(year)
-                .orElseThrow(() ->
-                        new NotFoundException("Tariffs not found for year " + year));
+                .orElseThrow(() -> {
+                    log.warn("Tariffs not found for year: {}", year);
+                    return new NotFoundException("Tariffs not found for year " + year);
+                });
     }
 
     /**
@@ -54,10 +58,13 @@ public class TariffsService {
     public Optional<Map<String, Double>> getTariffsByCurrency(
             Integer year,
             Currency currency) {
-
-        return Optional.ofNullable(getByYear(year))
+        Optional<Map<String, Double>> tariffs = Optional.ofNullable(getByYear(year))
                 .map(TariffsDocument::getCurrencies)
                 .map(currencies -> currencies.get(currency.name()));
+        if (tariffs.isEmpty()) {
+            log.warn("Tariffs not found for year: {} and currency: {}", year, currency);
+        }
+        return tariffs;
     }
 
     /**
@@ -72,9 +79,12 @@ public class TariffsService {
             Integer year,
             Currency currency,
             String letter) {
-
-        return getTariffsByCurrency(year, currency)
+        Optional<Double> tariff = getTariffsByCurrency(year, currency)
                 .map(tariffs -> tariffs.get(letter));
+        if (tariff.isEmpty()) {
+            log.warn("Tariff not found for year: {}, currency: {}, letter: {}", year, currency, letter);
+        }
+        return tariff;
     }
 
     /**

@@ -3,6 +3,7 @@ package com.vasylenko.ecollectobackend.stamp;
 import com.vasylenko.ecollectobackend.dto.ErrorResponse;
 import com.vasylenko.ecollectobackend.dto.StampDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
+@Slf4j
 public class StampController {
 
     private final StampService stampService;
@@ -45,7 +47,10 @@ public class StampController {
     public ResponseEntity<StampDto> getStampById(@PathVariable String id) {
         return stampService.findById(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseGet(() -> {
+                    log.warn("Stamp with id {} not found", id);
+                    return ResponseEntity.notFound().build();
+                });
     }
 
     /**
