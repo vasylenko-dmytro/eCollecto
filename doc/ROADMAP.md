@@ -67,10 +67,10 @@ Engineering foundations needed before protected user features and AI integration
   - **[RESOLVED]** backend tests
   - **[RESOLVED]** frontend lint, build, and tests
   - OpenAPI / contract validation (fail if generated spec diverges from committed `openapi.yaml`)
-  - dependency vulnerability scanning (Gradle + npm)
-  - Sonar static analysis for maintainability, bugs, code smells, and security hotspots
+  - **[RESOLVED]** dependency vulnerability scanning (Gradle + npm)
+  - **[RESOLVED]** Static analysis for maintainability, bugs, code smells, and security hotspots
 - Fail CI on critical and high-severity vulnerabilities once the initial baseline is stabilized.
-- Use SonarLint locally in IDEs; SonarQube or SonarCloud in CI.
+- **[RESOLVED]** CodeQL running in CI.
 - **[RESOLVED]** Add frontend testing: **Vitest + React Testing Library**.
   - **[RESOLVED]** Cover: route behaviour, error states, loading states, search filtering, tariff denomination formatting, and Zod schema validation (positive and negative scenarios). 108 tests across 11 suites in `src/__tests__/`.
 
