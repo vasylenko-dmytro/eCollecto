@@ -192,8 +192,6 @@ gradle-app.setting
 /gradle/wrapper/gradle-wrapper.properties
 /.idea/
 /gradle/
-/gradlew
-/gradlew.bat
 /frontend/ecollecto-ui/dist/
 /.vscode/
 /backend/ecollecto-backend/openapi.yaml
