@@ -81,7 +81,7 @@ Engineering foundations needed before protected user features and AI integration
 - **[RESOLVED]** Replace `@Data` on Mongo `@Document` classes with explicit `@Getter`, `@Setter`, and controlled `@ToString` / `@EqualsAndHashCode`.
 
 ### 5. Additional critical cleanup
-- Introduce a **Gradle version catalog** (`gradle/libs.versions.toml`) for consistent plugin and library versions across modules.
+- **[RESOLVED]** Introduce a **Gradle version catalog** (`gradle/libs.versions.toml`) for consistent plugin and library versions across modules.
 - Do not ignore the Gradle wrapper in `.gitignore` — wrapper files must be versioned for reproducible builds.
 - Reassess whether **Java 25 + Spring Boot 4** is the right long-term baseline; consider whether an LTS-aligned baseline reduces operational risk.
 - **[RESOLVED]** Align TypeScript and ESLint targets: `tsconfig.app.json` uses ES2022, `tsconfig.node.json` uses ES2023, `eslint.config.js` uses `ecmaVersion: 2020`.

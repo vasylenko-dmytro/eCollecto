@@ -1,15 +1,15 @@
 plugins {
 	id 'java'
 	id 'jacoco'
-	id 'org.springframework.boot' version '4.0.2'
-	id 'io.spring.dependency-management' version '1.1.7'
+	alias(libs.plugins.spring.boot)
+	alias(libs.plugins.spring.dependency.mgmt)
 }
 
 description = 'ecollecto-backend'
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(25)
+		languageVersion = JavaLanguageVersion.of(libs.versions.jdk.get().toInteger())
 	}
 }
 
@@ -26,24 +26,24 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5'
+	implementation libs.springdoc.openapi.webmvc.ui
 
-	compileOnly 'org.projectlombok:lombok:1.18.42'
-    annotationProcessor 'org.projectlombok:lombok:1.18.42'
-    annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
-    annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.2'
-    implementation 'org.mapstruct:mapstruct:1.6.2'
+	compileOnly libs.lombok
+    annotationProcessor libs.lombok
+    annotationProcessor libs.lombok.mapstruct.binding
+    annotationProcessor libs.mapstruct.processor
+    implementation libs.mapstruct
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'com.fasterxml.jackson.core:jackson-databind'
 	testImplementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
-	testImplementation 'org.mockito:mockito-junit-jupiter:5.21.0'
+	testImplementation libs.mockito.junit.jupiter
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-	testCompileOnly 'org.projectlombok:lombok:1.18.42'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.42'
+	testCompileOnly libs.lombok
+    testAnnotationProcessor libs.lombok
 
-    mockitoAgent('org.mockito:mockito-core:5.21.0') { transitive = false }
+    mockitoAgent(libs.mockito.core) { transitive = false }
 }
 
 tasks.named('test') {

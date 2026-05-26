@@ -1,12 +1,12 @@
 plugins {
-    id("com.github.node-gradle.node") version "7.0.2"
+    alias(libs.plugins.node.gradle)
 }
 
 import com.github.gradle.node.npm.task.NpmTask
 
 node {
-    version = "24.7.0"
-    npmVersion = "11.6.0"
+    version = libs.versions.nodejs.get()
+    npmVersion = libs.versions.npm.get()
     download = true
 }
 
