@@ -1,6 +1,6 @@
 # eCollecto Backend
 
-Spring Boot service that serves the eCollecto stamp collection data via a read-only REST API backed by MongoDB. It also exposes a Spring AI MCP server for integration tooling.
+Spring Boot service that serves the eCollecto stamp collection data via a read-only REST API backed by MongoDB.
 
 ## Features
 - Read-only REST endpoints for stamps, first day covers, designers, and tariffs
@@ -13,7 +13,6 @@ Spring Boot service that serves the eCollecto stamp collection data via a read-o
 - Spring Boot 4
 - Spring Web + Validation
 - Spring Data MongoDB
-- Spring AI MCP Server
 - Lombok
 
 ## Requirements
@@ -24,7 +23,6 @@ Spring Boot service that serves the eCollecto stamp collection data via a read-o
 Default config lives at `src/main/resources/application.properties`:
 
 - `spring.mongodb.uri` (default: `mongodb://localhost:27017/ecollecto`)
-- `spring.ai.mcp.server.enabled` (default: `true`)
 
 Override with environment variables or `-D` flags as needed, for example:
 
