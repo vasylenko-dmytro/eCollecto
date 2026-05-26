@@ -185,12 +185,6 @@ web_modules/
 # Ignore Gradle GUI config
 gradle-app.setting
 
-# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
-!gradle-wrapper.jar
-
-# Avoid ignore Gradle wrappper properties
-!gradle-wrapper.properties
-
 # Cache of project
 .gradletasknamecache
 
@@ -202,8 +196,4 @@ gradle-app.setting
 /gradlew.bat
 /frontend/ecollecto-ui/dist/
 /.vscode/
-/backend/ecollecto-backend/promts/
-/.ai/
-/mcp/
 /backend/ecollecto-backend/openapi.yaml
-/skills/
