@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
 import type {Product} from '../../features/product/types/product';
+import {ProductSchema} from '../../features/product/types/schemas/product.schema';
 import {ProductCard} from '../../features/product';
 import NoSearchResults from "../../features/product/components/NoSearchResults";
 
@@ -21,7 +22,8 @@ export default function HomePage({searchTerm}: { searchTerm: string }) {
         if (!response.ok) {
           throw new Error(`Failed to load products (${response.status})`);
         }
-        const data = await response.json() as Product[];
+        const raw = await response.json();
+        const data = ProductSchema.array().parse(raw);
         if (isMounted) {
           setProducts(data);
         }

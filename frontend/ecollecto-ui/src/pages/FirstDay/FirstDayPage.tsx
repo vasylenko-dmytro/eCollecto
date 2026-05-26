@@ -1,4 +1,5 @@
 import type {FirstDayIssue} from "../../features/product/types/firstdayissue";
+import {FirstDayIssueSchema} from "../../features/product/types/schemas/firstdayissue.schema";
 import FirstDayCollection
   from "../../features/product/components/FirstDayIssue/FirstDayCollection";
 import NoSearchResults from "../../features/product/components/NoSearchResults";
@@ -23,7 +24,8 @@ export default function FirstDayPage({searchTerm}: { searchTerm: string }) {
         if (!response.ok) {
           throw new Error(`Failed to load first day covers (${response.status})`);
         }
-        const data = await response.json() as FirstDayIssue[];
+        const raw = await response.json();
+        const data = FirstDayIssueSchema.array().parse(raw);
         if (isMounted) {
           setCollectionProducts(data);
         }

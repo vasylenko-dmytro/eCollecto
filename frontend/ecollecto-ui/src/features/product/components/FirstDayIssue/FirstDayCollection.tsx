@@ -11,7 +11,7 @@ export default function FirstDayCollection({product}: { product: FirstDayIssue }
           <div className="aspect-square bg-gray-300 rounded-xl overflow-hidden">
             <img
               className="w-full h-full object-contain p-4"
-              src={product.images.envelope}
+              src={product.images.envelope ?? defaultImg}
               alt={`${product.name} envelope`}
               loading="lazy"
               onError={(e) => {

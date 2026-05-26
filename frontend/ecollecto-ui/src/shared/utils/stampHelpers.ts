@@ -1,9 +1,7 @@
-type TariffsByCurrency = Record<string, Record<string, number>>;
+import { z } from 'zod';
+import { TariffsSchema } from '../../features/product/types/schemas/tariffs.schema';
 
-type TariffsDto = {
-  year: number;
-  currencies: TariffsByCurrency;
-};
+type TariffsByCurrency = Record<string, Record<string, number>>;
 
 let tariffsCache: TariffsByCurrency | null = null;
 let tariffsPromise: Promise<TariffsByCurrency | null> | null = null;
@@ -16,15 +14,14 @@ async function loadTariffs(): Promise<TariffsByCurrency | null> {
   if (!tariffsPromise) {
     tariffsPromise = fetch("/api/tariffs")
       .then((response) => (response.ok ? response.json() : null))
-      .then((data: TariffsDto[] | null) => {
-        if (!data || data.length === 0) {
-          return null;
-        }
+      .then((data: unknown) => {
+        if (!data) return null;
 
-        const latest = data.reduce<TariffsDto | null>((current, item) => {
-          if (!current || item.year > current.year) {
-            return item;
-          }
+        const parsed = z.array(TariffsSchema).safeParse(data);
+        if (!parsed.success || parsed.data.length === 0) return null;
+
+        const latest = parsed.data.reduce<z.infer<typeof TariffsSchema> | null>((current, item) => {
+          if (!current || item.year > current.year) return item;
           return current;
         }, null);
 

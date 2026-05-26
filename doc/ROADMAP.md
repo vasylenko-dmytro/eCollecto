@@ -9,9 +9,9 @@ This is the single canonical post-MVP delivery plan. It covers the engineering f
 - **Frontend stack:** React 19, TypeScript, Vite 7, React Router 7, Tailwind CSS 4.
 - **API:** Read-only REST at `/api`, feature-sliced by domain: `stamp/`, `fdc/`, `designer/`, `tariff/`.
 - **Known state:**
-  - DTOs are flattened for UI consumption; backend/frontend payload shape alignment is critical.
+  - DTOs are flattened for UI consumption; backend/frontend payload shape alignment is critical.  **[PARTIAL]** Zod schemas added for runtime validation; CI contract checks still pending.
   - Frontend uses local `useEffect` + `fetch` + `AbortController`; minimal shared state in `App.tsx`.
-  - Frontend contains browser-side `mongoose` schema files — treat as immediate-removal legacy.
+  - **[RESOLVED]** Browser-side `mongoose` schema files removed; plain TypeScript interfaces used instead.
   - Backend tests exist; frontend test coverage is absent.
   - No Docker Compose, no CI, no Mongock migrations, no Redux, no Keycloak integration yet.
 
@@ -34,17 +34,17 @@ Engineering foundations needed before protected user features and AI integration
 
 ### 2. Frontend modernization
 - Keep functional components as the standard UI model.
-- **Remove browser-side `mongoose` usage** from `src/features/product/schema/*` immediately — this is architecturally wrong in a browser bundle.
-  - Replace with plain TypeScript interfaces where only typing is needed.
-  - Replace with Zod/Yup schemas where runtime validation is needed.
+- **[RESOLVED]** **Remove browser-side `mongoose` usage** from `src/features/product/schema/*` immediately — this is architecturally wrong in a browser bundle.
+  - **[RESOLVED]** Replace with plain TypeScript interfaces where only typing is needed.
+  - **[RESOLVED]** Replace with Zod/Yup schemas where runtime validation is needed.
 - Introduce **Redux Toolkit** for cross-page shared state only:
   - auth/session, current user profile, collection / wishlist / favorites, AI chat session and recommendation results, async request status for protected features.
 - Keep local component state in `useState`.
 - Use **Redux thunks** for business-level async API calls: session bootstrap, profile load, collection updates, AI requests, protected route data.
 - Adopt **Formik + Yup** for operationally important forms: profile settings, collection item metadata, admin enrichment forms.
 - Continue with **React Router** — add clear route groups: public routes, authenticated routes, admin routes.
-- Replace raw `<a href>` navigation in `Header.tsx` with `Link` / `NavLink` from `react-router-dom` to avoid full page reloads.
-- Fix self-referencing links in `CollectionPage.tsx` and `FirstDayPage.tsx` (currently both point to the same page they are on).
+- **[RESOLVED]** Replace raw `<a href>` navigation in `Header.tsx` with `Link` / `NavLink` from `react-router-dom` to avoid full page reloads.
+- **[RESOLVED]** Fix self-referencing links in `CollectionPage.tsx` and `FirstDayPage.tsx` (currently both point to the same page they are on).
 - Continue with **Tailwind CSS** — build a shared branding layer from the Ukrposhta stamp palette using Tailwind theme tokens and reusable components.
 - Evolve frontend folder structure toward:
   ```
@@ -72,19 +72,19 @@ Engineering foundations needed before protected user features and AI integration
 
 ### 4. Contract governance and backend consistency
 - Preserve the global error model `{ message, code, status }`.
-- Move toward centralized exception handling in `GlobalExceptionHandler`; keep controller-local handlers only where a feature truly needs a custom contract.
+- **[RESOLVED]** Move toward centralized exception handling in `GlobalExceptionHandler`; keep controller-local handlers only where a feature truly needs a custom contract.
 - Add explicit handling for: access denied / unauthorized (403/401), validation errors (400), AI provider timeouts/failures, Keycloak/token parsing failures.
 - Treat these as the contract sources of truth together: `backend/ecollecto-backend/doc/API.md`, controller annotations, `backend/ecollecto-backend/openapi.yaml`.
-- Rule: any backend DTO change requires matching TypeScript updates in `frontend/ecollecto-ui/src/features/product/types`.
-- Add lightweight contract checks in CI for key DTO payloads: `StampDto`, `FirstDayCoverDto`, `TariffsDto`.
-- Move manual DTO mapping from service methods into dedicated **MapStruct** mappers (`@Mapper(componentModel = "spring")`).
-- Replace `@Data` on Mongo `@Document` classes with explicit `@Getter`, `@Setter`, and controlled `@ToString` / `@EqualsAndHashCode`.
+- Rule: any backend DTO change requires matching TypeScript updates in `frontend/ecollecto-ui/src/features/product/types`. **[PARTIAL]** Zod schemas in `types/schemas/` are now the single source of truth for TS types; manual sync still required when Java DTOs change.
+- Add lightweight contract checks in CI for key DTO payloads: `StampDto`, `FirstDayCoverDto`, `TariffsDto`. **← remaining work to fully close the alignment issue**
+- **[RESOLVED]** Move manual DTO mapping from service methods into dedicated **MapStruct** mappers (`@Mapper(componentModel = "spring")`).
+- **[RESOLVED]** Replace `@Data` on Mongo `@Document` classes with explicit `@Getter`, `@Setter`, and controlled `@ToString` / `@EqualsAndHashCode`.
 
 ### 5. Additional critical cleanup
 - Introduce a **Gradle version catalog** (`gradle/libs.versions.toml`) for consistent plugin and library versions across modules.
 - Do not ignore the Gradle wrapper in `.gitignore` — wrapper files must be versioned for reproducible builds.
 - Reassess whether **Java 25 + Spring Boot 4** is the right long-term baseline; consider whether an LTS-aligned baseline reduces operational risk.
-- Align TypeScript and ESLint targets: `tsconfig.app.json` uses ES2022, `tsconfig.node.json` uses ES2023, `eslint.config.js` uses `ecmaVersion: 2020`.
+- **[RESOLVED]** Align TypeScript and ESLint targets: `tsconfig.app.json` uses ES2022, `tsconfig.node.json` uses ES2023, `eslint.config.js` uses `ecmaVersion: 2020`.
 
 ---
 
@@ -229,4 +229,3 @@ Do **not** rewrite the UI. Work incrementally:
 - Introduce Redux Toolkit only for cross-page authenticated state.
 - Add vulnerability checks and Sonar analysis early.
 - Add AI features only after user identity and protected data models are stable.
-

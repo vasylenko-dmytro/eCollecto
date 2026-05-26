@@ -1,6 +1,7 @@
 import StampImageCollectionGallery
   from "../../features/product/components/CollectionDetails/StampImageCollectionGallery";
 import type {Product} from "../../features/product/types/product";
+import {ProductSchema} from "../../features/product/types/schemas/product.schema";
 import {Link} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import NoSearchResults from "../../features/product/components/NoSearchResults";
@@ -22,7 +23,8 @@ export default function CollectionPage({searchTerm}: { searchTerm: string }) {
         if (!response.ok) {
           throw new Error(`Failed to load collection (${response.status})`);
         }
-        const data = await response.json() as Product[];
+        const raw = await response.json();
+        const data = ProductSchema.array().parse(raw);
         if (isMounted) {
           setCollectionProducts(data);
         }

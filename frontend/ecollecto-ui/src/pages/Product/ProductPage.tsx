@@ -1,6 +1,7 @@
 import {useParams} from 'react-router-dom';
 
 import type {Product} from '../../features/product/types/product';
+import {ProductSchema} from '../../features/product/types/schemas/product.schema';
 import NotFoundPage from "../NotFound/NotFoundPage";
 import StampContainer from "../../features/product/components/StampContainer";
 import InformationSection from "../../features/product/components/ProductSpecDetails/InformationSection";
@@ -39,7 +40,8 @@ export default function ProductPage() {
         if (!response.ok) {
           throw new Error(`Failed to load product (${response.status})`);
         }
-        const data = await response.json() as Product;
+        const raw = await response.json();
+        const data = ProductSchema.parse(raw);
         if (isMounted) {
           setProduct(data);
         }
