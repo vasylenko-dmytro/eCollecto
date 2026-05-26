@@ -1,14 +1,18 @@
 package com.vasylenko.ecollectobackend.tariff;
 
 import com.vasylenko.ecollectobackend.common.model.BaseDocument;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
 import java.util.Map;
 
-@Data
+@Getter
+@Setter
+@ToString
 @EqualsAndHashCode(callSuper = true)
 @Document(collection = "tariffs")
 public class TariffsDocument extends BaseDocument {

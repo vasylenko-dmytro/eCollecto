@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {useLocation} from 'react-router-dom';
+import {Link, NavLink, useLocation} from 'react-router-dom';
 import brandIcon from '@/assets/logo_75.ico';
 import LanguageDropdown from "../../features/product/components/HeaderDetails/LanguageDropdown";
 
@@ -34,10 +34,10 @@ export default function Header({onSearch}: { onSearch: (term: string) => void })
 
         {/* Logo and Mobile Controls */}
         <div className="flex items-center justify-between">
-          <a className="flex items-center font-semibold text-xl text-black dark:text-white focus:outline-hidden"
-             href="/" aria-label="Brand">
+          <Link className="flex items-center font-semibold text-xl text-black dark:text-white focus:outline-hidden"
+             to="/" aria-label="Brand">
             <img src={brandIcon} alt="sCollecto" className="h-8 w-auto"/>
-          </a>
+          </Link>
 
           <div className="md:hidden flex items-center gap-1">
             {/* Mobile Search Toggle */}
@@ -63,15 +63,15 @@ export default function Header({onSearch}: { onSearch: (term: string) => void })
         {/* Navigation Links */}
         <div className={`${isOpen ? 'block' : 'hidden'} transition-all duration-300 basis-full grow md:block`}>
           <div className="py-2 md:py-0 flex flex-col md:flex-row md:items-center md:justify-end gap-1">
-            <a className="p-2 text-sm text-gray-800 dark:text-neutral-200 hover:text-gray-500" href="/">
+            <NavLink className="p-2 text-sm text-gray-800 dark:text-neutral-200 hover:text-gray-500" to="/">
               Stamps
-            </a>
-            <a className="p-2 text-sm text-gray-800 dark:text-neutral-200 hover:text-gray-500" href="/firstday">
+            </NavLink>
+            <NavLink className="p-2 text-sm text-gray-800 dark:text-neutral-200 hover:text-gray-500" to="/firstday">
               First day of issue
-            </a>
-            <a className="p-2 text-sm text-gray-800 dark:text-neutral-200 hover:text-gray-500" href="/collection">
+            </NavLink>
+            <NavLink className="p-2 text-sm text-gray-800 dark:text-neutral-200 hover:text-gray-500" to="/collection">
               Collection
-            </a>
+            </NavLink>
 
             <div
               className="relative flex items-center md:ps-2.5 md:ms-1.5 md:before:block md:before:absolute md:before:top-1/2 md:before:-start-px md:before:w-px md:before:h-4 md:before:bg-gray-300 dark:md:before:bg-neutral-700 md:before:-translate-y-1/2">
@@ -88,12 +88,12 @@ export default function Header({onSearch}: { onSearch: (term: string) => void })
 
               <LanguageDropdown />
 
-              <a className="p-2 flex items-center text-sm text-gray-800 dark:text-neutral-200 hover:text-gray-500"
-                 href="#">
+              <button className="p-2 flex items-center text-sm text-gray-800 dark:text-neutral-200 hover:text-gray-500 cursor-not-allowed"
+                 disabled aria-label="Log in (coming soon)">
                 <UserIcon/>
                 Log in
                 <sup className="ms-0.5 text-xs bg-blue-700 text-white py-0.5 px-1 rounded-lg">TBD</sup>
-              </a>
+              </button>
             </div>
           </div>
         </div>

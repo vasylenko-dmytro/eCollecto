@@ -1,5 +1,6 @@
 package com.vasylenko.ecollectobackend.designer;
 
+import com.vasylenko.ecollectobackend.common.exception.GlobalExceptionHandler;
 import com.vasylenko.ecollectobackend.dto.DesignerDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,9 @@ class DesignerControllerTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(new DesignerController(designerService)).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(new DesignerController(designerService))
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
     }
 
     @Test
@@ -77,7 +80,7 @@ class DesignerControllerTest {
         mockMvc.perform(get("/api/designers"))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.message").value("boom"))
-                .andExpect(jsonPath("$.code").value("DESIGNER_ERROR"))
+                .andExpect(jsonPath("$.code").value("INTERNAL_SERVER_ERROR"))
                 .andExpect(jsonPath("$.status").value(500));
     }
 }

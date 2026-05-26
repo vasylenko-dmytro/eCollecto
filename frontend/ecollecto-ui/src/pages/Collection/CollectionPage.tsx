@@ -78,7 +78,7 @@ export default function CollectionPage({searchTerm}: { searchTerm: string }) {
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 lg:gap-2">
           {filteredProducts.map((product) => (
             <div key={product.stamp_id}>
-              <Link to={`/collection`}>
+              <Link to={`/stamps/${product.stamp_id}`}>
                 <StampImageCollectionGallery product={product}/>
               </Link>
             </div>

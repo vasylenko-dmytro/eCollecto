@@ -1,5 +1,6 @@
 package com.vasylenko.ecollectobackend.fdc;
 
+import com.vasylenko.ecollectobackend.common.exception.GlobalExceptionHandler;
 import com.vasylenko.ecollectobackend.dto.FirstDayCoverDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,9 @@ class FirstDayCoverControllerTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(new FirstDayCoverController(firstDayCoverService)).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(new FirstDayCoverController(firstDayCoverService))
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
     }
 
     @Test
@@ -79,7 +82,7 @@ class FirstDayCoverControllerTest {
         mockMvc.perform(get("/api/first-day-covers"))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.message").value("boom"))
-                .andExpect(jsonPath("$.code").value("FIRST_DAY_COVER_ERROR"))
+                .andExpect(jsonPath("$.code").value("INTERNAL_SERVER_ERROR"))
                 .andExpect(jsonPath("$.status").value(500));
     }
 }

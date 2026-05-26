@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class DesignerService {
     private final DesignerRepository designerRepository;
+    private final DesignerMapper designerMapper;
 
     /**
      * Retrieves all designers from the database.
@@ -26,7 +27,7 @@ public class DesignerService {
      */
     public List<DesignerDto> findAll() {
         return designerRepository.findAll().stream()
-                .map(this::toDto)
+                .map(designerMapper::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -37,23 +38,10 @@ public class DesignerService {
      * @return an {@link Optional} containing the {@link DesignerDto} if found.
      */
     public Optional<DesignerDto> findById(String id) {
-        Optional<DesignerDto> designer = designerRepository.findById(id).map(this::toDto);
+        Optional<DesignerDto> designer = designerRepository.findById(id).map(designerMapper::toDto);
         if (designer.isEmpty()) {
             log.warn("Designer with id {} not found", id);
         }
         return designer;
-    }
-
-    /**
-     * Converts a database document entity to a Data Transfer Object (DTO).
-     *
-     * @param document the {@link DesignerDocument} to convert.
-     * @return a populated {@link DesignerDto}.
-     */
-    private DesignerDto toDto(DesignerDocument document) {
-        return DesignerDto.builder()
-                .designerId(document.getId())
-                .name(document.getName())
-                .build();
     }
 }

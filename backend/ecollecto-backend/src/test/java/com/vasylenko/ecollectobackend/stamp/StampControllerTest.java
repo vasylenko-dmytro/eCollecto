@@ -1,5 +1,6 @@
 package com.vasylenko.ecollectobackend.stamp;
 
+import com.vasylenko.ecollectobackend.common.exception.GlobalExceptionHandler;
 import com.vasylenko.ecollectobackend.dto.StampDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,9 @@ class StampControllerTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(new StampController(stampService)).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(new StampController(stampService))
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
     }
 
     @Test
@@ -77,7 +80,7 @@ class StampControllerTest {
         mockMvc.perform(get("/api/stamps"))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.message").value("boom"))
-                .andExpect(jsonPath("$.code").value("STAMP_ERROR"))
+                .andExpect(jsonPath("$.code").value("INTERNAL_SERVER_ERROR"))
                 .andExpect(jsonPath("$.status").value(500));
     }
 }

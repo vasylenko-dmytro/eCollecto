@@ -1,5 +1,6 @@
 package com.vasylenko.ecollectobackend.tariff;
 
+import com.vasylenko.ecollectobackend.common.exception.GlobalExceptionHandler;
 import com.vasylenko.ecollectobackend.common.model.Currency;
 import com.vasylenko.ecollectobackend.dto.TariffsDto;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,7 +32,9 @@ class TariffsControllerTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(new TariffsController(tariffsService)).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(new TariffsController(tariffsService))
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
     }
 
     @Test
@@ -97,7 +100,7 @@ class TariffsControllerTest {
         mockMvc.perform(get("/api/tariffs"))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.message").value("boom"))
-                .andExpect(jsonPath("$.code").value("TARIFF_ERROR"))
+                .andExpect(jsonPath("$.code").value("INTERNAL_SERVER_ERROR"))
                 .andExpect(jsonPath("$.status").value(500));
     }
 }

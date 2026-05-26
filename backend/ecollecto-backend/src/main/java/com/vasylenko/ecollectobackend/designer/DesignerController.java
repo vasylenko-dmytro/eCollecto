@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,12 +21,13 @@ import java.util.List;
  * Provides endpoints for retrieving designer details from the ecollecto system.
  */
 @RestController
+
 @RequiredArgsConstructor
 @RequestMapping("/api")
 @Slf4j
 @Tag(name = "Designers", description = "Designer lookup endpoints.")
 public class DesignerController {
-
+    
     private final DesignerService designerService;
 
     /**
@@ -73,19 +73,5 @@ public class DesignerController {
                     log.warn("Designer with id {} not found", id);
                     return ResponseEntity.notFound().build();
                 });
-    }
-
-    /**
-     * Exception handler for designer-related errors
-     */
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleException(Exception e) {
-        log.error("An error occurred in DesignerController", e);
-        ErrorResponse error = ErrorResponse.builder()
-                .message(e.getMessage())
-                .code("DESIGNER_ERROR")
-                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .build();
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 }

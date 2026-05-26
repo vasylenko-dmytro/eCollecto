@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -16,6 +17,20 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleNotFoundException(NotFoundException e) {
         ErrorResponse error = ErrorResponse.builder()
                 .message(e.getMessage())
+                .code("NOT_FOUND")
+                .status(HttpStatus.NOT_FOUND.value())
+                .build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+    /**
+     * Handles Spring MVC's NoResourceFoundException so unknown paths return 404
+     * instead of being swallowed by the generic 500 handler.
+     */
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNoResourceFound(NoResourceFoundException e) {
+        ErrorResponse error = ErrorResponse.builder()
+                .message("No resource found for request '" + e.getResourcePath() + "'")
                 .code("NOT_FOUND")
                 .status(HttpStatus.NOT_FOUND.value())
                 .build();

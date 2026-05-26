@@ -76,17 +76,4 @@ public class FirstDayCoverController {
                 });
     }
 
-    /**
-     * Exception handler for first day cover-related errors
-     */
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleException(Exception e) {
-        log.error("An error occurred in FirstDayCoverController", e);
-        ErrorResponse error = ErrorResponse.builder()
-                .message(e.getMessage())
-                .code("FIRST_DAY_COVER_ERROR")
-                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .build();
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
-    }
 }

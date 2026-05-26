@@ -1,13 +1,17 @@
 package com.vasylenko.ecollectobackend.stamp;
 
 import com.vasylenko.ecollectobackend.common.model.BaseDocument;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
-@Data
+@Getter
+@Setter
+@ToString
 @EqualsAndHashCode(callSuper = true)
 @Document(collection = "stamp")
 public class StampDocument extends BaseDocument {
@@ -19,7 +23,10 @@ public class StampDocument extends BaseDocument {
     private Release release;
     private Images images;
 
-    @Data
+    @Getter
+    @Setter
+    @ToString
+    @EqualsAndHashCode
     public static class Meta {
         private Denomination denomination;
         private String series;
@@ -30,13 +37,19 @@ public class StampDocument extends BaseDocument {
         private Boolean europa;
     }
 
-    @Data
+    @Getter
+    @Setter
+    @ToString
+    @EqualsAndHashCode
     public static class Denomination {
         private String currency;
         private String code;
     }
 
-    @Data
+    @Getter
+    @Setter
+    @ToString
+    @EqualsAndHashCode
     public static class Release {
         private String date;
         private Integer year;
@@ -45,7 +58,10 @@ public class StampDocument extends BaseDocument {
         private Boolean isAvailable;
     }
 
-    @Data
+    @Getter
+    @Setter
+    @ToString
+    @EqualsAndHashCode
     public static class Images {
         private String original;
         private String small;

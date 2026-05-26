@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class TariffsService {
     private final TariffsRepository repository;
+    private final TariffsMapper tariffsMapper;
 
     /**
      * Retrieves all tariff documents and converts them to DTOs.
@@ -29,7 +30,7 @@ public class TariffsService {
      */
     public List<TariffsDto> findAll() {
         return repository.findAll().stream()
-                .map(this::toDto)
+                .map(tariffsMapper::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -85,20 +86,5 @@ public class TariffsService {
             log.warn("Tariff not found for year: {}, currency: {}, letter: {}", year, currency, letter);
         }
         return tariff;
-    }
-
-    /**
-     * Converts a database document to a Data Transfer Object.
-     *
-     * @param document The source {@link TariffsDocument}.
-     * @return A populated {@link TariffsDto}.
-     */
-    private TariffsDto toDto(TariffsDocument document) {
-        return TariffsDto.builder()
-                .id(document.getId())
-                .year(document.getYear())
-                .updatedAt(document.getUpdatedAt())
-                .currencies(document.getCurrencies())
-                .build();
     }
 }

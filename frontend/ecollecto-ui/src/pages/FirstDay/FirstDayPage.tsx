@@ -1,5 +1,4 @@
 import type {FirstDayIssue} from "../../features/product/types/firstdayissue";
-import {Link} from "react-router-dom";
 import FirstDayCollection
   from "../../features/product/components/FirstDayIssue/FirstDayCollection";
 import NoSearchResults from "../../features/product/components/NoSearchResults";
@@ -80,9 +79,7 @@ export default function FirstDayPage({searchTerm}: { searchTerm: string }) {
         <div className="flex flex-col gap-8 md:gap-12">
           {filteredProducts.map((product) => (
             <div key={product.postmark_id}>
-              <Link to={`/firstday`}>
-                <FirstDayCollection product={product}/>
-              </Link>
+              <FirstDayCollection product={product}/>
             </div>
           ))}
         </div>
