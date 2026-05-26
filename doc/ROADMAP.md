@@ -12,7 +12,7 @@ This is the single canonical post-MVP delivery plan. It covers the engineering f
   - DTOs are flattened for UI consumption; backend/frontend payload shape alignment is critical.  **[PARTIAL]** Zod schemas added for runtime validation; CI contract checks still pending.
   - Frontend uses local `useEffect` + `fetch` + `AbortController`; minimal shared state in `App.tsx`.
   - **[RESOLVED]** Browser-side `mongoose` schema files removed; plain TypeScript interfaces used instead.
-  - Backend tests exist; frontend test coverage is absent.
+  - **[RESOLVED]** Backend tests exist; frontend test coverage is absent.
   - No Docker Compose, no CI, no Mongock migrations, no Redux, no Keycloak integration yet.
 
 ---
@@ -68,7 +68,7 @@ Engineering foundations needed before protected user features and AI integration
 - Fail CI on critical and high-severity vulnerabilities once the initial baseline is stabilized.
 - Use SonarLint locally in IDEs; SonarQube or SonarCloud in CI.
 - Add frontend testing: **Vitest + React Testing Library**.
-  - Cover: route behavior, auth guards, collection flows, AI chat state transitions, tariff denomination formatting.
+  - **[RESOLVED]** Cover: route behaviour, error states, loading states, search filtering, tariff denomination formatting, and Zod schema validation (positive and negative scenarios). 108 tests across 11 suites in `src/__tests__/`.
 
 ### 4. Contract governance and backend consistency
 - Preserve the global error model `{ message, code, status }`.
@@ -82,8 +82,6 @@ Engineering foundations needed before protected user features and AI integration
 
 ### 5. Additional critical cleanup
 - **[RESOLVED]** Introduce a **Gradle version catalog** (`gradle/libs.versions.toml`) for consistent plugin and library versions across modules.
-- Do not ignore the Gradle wrapper in `.gitignore` — wrapper files must be versioned for reproducible builds.
-- Reassess whether **Java 25 + Spring Boot 4** is the right long-term baseline; consider whether an LTS-aligned baseline reduces operational risk.
 - **[RESOLVED]** Align TypeScript and ESLint targets: `tsconfig.app.json` uses ES2022, `tsconfig.node.json` uses ES2023, `eslint.config.js` uses `ecmaVersion: 2020`.
 
 ---

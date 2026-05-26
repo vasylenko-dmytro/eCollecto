@@ -13,5 +13,9 @@
 
     "types": ["vite/client"]
   },
-  "include": ["src", "tailwind.config.ts"]
+  "include": [
+    "src",
+    "tailwind.config.ts",
+    "node_modules/vitest/globals.d.ts"
+  ]
 }
