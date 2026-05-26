@@ -32,7 +32,7 @@ Engineering foundations needed before protected user features and AI integration
 - **[RESOLVED]** Use a shared root `.env` for backend, frontend, gateway, MongoDB, and Keycloak configuration so all environments read from one place.
 - **[RESOLVED]** Add persistent volumes for MongoDB and Keycloak where local data persistence matters.
 - **[RESOLVED]** Provide a seeded Keycloak realm/client import (`keycloak/realm-export.json`) for `ecollecto`, including `ecollecto-ui` and `ecollecto-backend` clients.
-- Add bootstrap docs so a new engineer can bring up dependencies without manual installation.
+- **[RESOLVED]** Add bootstrap docs so a new engineer can bring up dependencies without manual installation.
 - **[RESOLVED]** Keep Spring and frontend config environment-driven so local, CI, and Docker environments share the same wiring.
 - Add a MongoDB migration tool (`Mongock`) before user-domain and write-flow document structures start changing.
 
