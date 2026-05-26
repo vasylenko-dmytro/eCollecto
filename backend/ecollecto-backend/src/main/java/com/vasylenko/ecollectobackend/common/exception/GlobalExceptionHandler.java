@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalExceptionHandler {
 
     /**
-     * Handles NotFoundException and returns status 404
+     * Handles NotFoundException and returns 404 status
      */
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorResponse> handleNotFoundException(NotFoundException e) {
@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles all other exceptions and returns status 500
+     * Handles all other exceptions and returns 500 status
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(Exception e) {
