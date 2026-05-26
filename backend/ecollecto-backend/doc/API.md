@@ -21,6 +21,8 @@ All error responses follow this standard format:
 ### HTTP Status Codes
 
 - `200 OK` - Request successful
+- `401 UNAUTHORIZED` - Missing or invalid JWT token
+- `403 FORBIDDEN` - Insufficient permissions
 - `404 NOT FOUND` - Resource not found
 - `500 INTERNAL SERVER ERROR` - Server error
 
@@ -240,8 +242,31 @@ Returns a single tariff value for the given year, currency, and postal letter.
 
 ## Notes
 
+- Public catalog endpoints (`/api/stamps`, `/api/designers`, `/api/first-day-covers`, `/api/tariffs`) are accessible without authentication
+- Protected endpoints (`/api/me/**`) require a valid Bearer JWT token issued by Keycloak
+- Admin endpoints (`/api/admin/**`) require `ROLE_ADMIN`
 - All endpoints are read-only (GET operations only)
 - Field names in responses match the frontend TypeScript interfaces exactly
 - Empty lists return `[]` (empty array)
 - Null values are included in responses where applicable
 - The API is designed to match the existing frontend data structures to minimize frontend changes
+
+### User Profile (Protected)
+
+#### GET /api/me
+
+Returns the authenticated user's profile. Creates the profile on first call.
+
+**Headers:** `Authorization: Bearer <token>` (required)
+
+**Response:** `200 OK` - User profile <br>
+**Response:** `401 UNAUTHORIZED` - Missing or invalid token
+
+```json
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "email": "testuser@ecollecto.dev",
+  "name": "Test User"
+}
+```
+

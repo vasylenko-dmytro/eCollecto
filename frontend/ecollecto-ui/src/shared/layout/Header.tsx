@@ -2,11 +2,15 @@ import React, {useState} from 'react';
 import {Link, NavLink, useLocation} from 'react-router-dom';
 import brandIcon from '@/assets/logo_75.ico';
 import LanguageDropdown from "../../features/product/components/HeaderDetails/LanguageDropdown";
+import { useAuth } from '../../features/auth/hooks/useAuth';
+import { LoginButton } from '../../features/auth/components/LoginButton';
+import { UserMenu } from '../../features/auth/components/UserMenu';
 
 export default function Header({onSearch}: { onSearch: (term: string) => void }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
+  const { isAuthenticated } = useAuth();
 
   const location = useLocation();
   const isProductPage = location.pathname.startsWith('/stamps/');
@@ -88,12 +92,7 @@ export default function Header({onSearch}: { onSearch: (term: string) => void })
 
               <LanguageDropdown />
 
-              <button className="p-2 flex items-center text-sm text-gray-800 dark:text-neutral-200 hover:text-gray-500 cursor-not-allowed"
-                 disabled aria-label="Log in (coming soon)">
-                <UserIcon/>
-                Log in
-                <sup className="ms-0.5 text-xs bg-blue-700 text-white py-0.5 px-1 rounded-lg">TBD</sup>
-              </button>
+              {isAuthenticated ? <UserMenu /> : <LoginButton />}
             </div>
           </div>
         </div>
@@ -140,17 +139,6 @@ function SearchIcon({className = "size-4"}) {
          stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="11" cy="11" r="8"/>
       <path d="m21 21-4.3-4.3"/>
-    </svg>
-  );
-}
-
-function UserIcon() {
-  return (
-    <svg className="shrink-0 size-4 me-3 md:me-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-         viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
-         strokeLinejoin="round">
-      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
-      <circle cx="12" cy="7" r="4"/>
     </svg>
   );
 }

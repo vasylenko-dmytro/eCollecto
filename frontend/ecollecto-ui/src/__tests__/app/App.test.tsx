@@ -2,6 +2,18 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '../../app/App';
 
+// Mock auth hook so tests don't need Redux/OIDC providers
+vi.mock('../../features/auth/hooks/useAuth', () => ({
+  useAuth: () => ({
+    user: null,
+    isAuthenticated: false,
+    isLoading: false,
+    signIn: vi.fn(),
+    signOut: vi.fn(),
+    getAccessToken: vi.fn(),
+  }),
+}));
+
 // Mock all page components to isolate routing logic
 vi.mock('../../pages/Home/HomePage', () => ({
   default: ({ searchTerm }: { searchTerm: string }) => (

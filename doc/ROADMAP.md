@@ -9,11 +9,15 @@ This is the single canonical post-MVP delivery plan. It covers the engineering f
 - **Frontend stack:** React 19, TypeScript, Vite 7, React Router 7, Tailwind CSS 4.
 - **API:** Read-only REST at `/api`, feature-sliced by domain: `stamp/`, `fdc/`, `designer/`, `tariff/`.
 - **Known state:**
-  - DTOs are flattened for UI consumption; backend/frontend payload shape alignment is critical.  **[PARTIAL]** Zod schemas added for runtime validation; CI contract checks still pending.
+  - DTOs are flattened for UI consumption; backend/frontend payload shape alignment is critical.
+  - **[PARTIAL]** Zod schemas added for runtime validation; CI contract checks still pending.
   - Frontend uses local `useEffect` + `fetch` + `AbortController`; minimal shared state in `App.tsx`.
   - **[RESOLVED]** Browser-side `mongoose` schema files removed; plain TypeScript interfaces used instead.
   - **[RESOLVED]** Backend tests exist; frontend test coverage is absent.
-  - No Docker Compose, no CI, no Mongock migrations, no Redux, no Keycloak integration yet.
+  - **[RESOLVED]** Docker Compose added (MongoDB + Keycloak). 
+  - **[RESOLVED]** CI added (GitHub Actions). No Mongock migrations yet. 
+  - **[RESOLVED]** Redux Toolkit introduced. 
+  - **[RESOLVED]** Keycloak integration complete.
 
 ---
 
@@ -23,13 +27,13 @@ This is the single canonical post-MVP delivery plan. It covers the engineering f
 Engineering foundations needed before protected user features and AI integrations can be built safely.
 
 ### 1. Dockerized supporting services
-- Add a root-level Docker Compose file for all non-app supporting services.
-- Start with: MongoDB, Keycloak; comment out Redis placeholder (planned for AI phase).
-- Use a shared root `.env` for backend, frontend, gateway, MongoDB, and Keycloak configuration so all environments read from one place.
-- Add persistent volumes for MongoDB and Keycloak where local data persistence matters.
-- Provide a seeded Keycloak realm/client import (`keycloak/realm-export.json`) for `ecollecto`, including `ecollecto-ui` and `ecollecto-backend` clients.
+- **[RESOLVED]** Add a root-level Docker Compose file for all non-app supporting services.
+- **[RESOLVED]** Start with: MongoDB, Keycloak; comment out Redis placeholder (planned for AI phase).
+- **[RESOLVED]** Use a shared root `.env` for backend, frontend, gateway, MongoDB, and Keycloak configuration so all environments read from one place.
+- **[RESOLVED]** Add persistent volumes for MongoDB and Keycloak where local data persistence matters.
+- **[RESOLVED]** Provide a seeded Keycloak realm/client import (`keycloak/realm-export.json`) for `ecollecto`, including `ecollecto-ui` and `ecollecto-backend` clients.
 - Add bootstrap docs so a new engineer can bring up dependencies without manual installation.
-- Keep Spring and frontend config environment-driven so local, CI, and Docker environments share the same wiring.
+- **[RESOLVED]** Keep Spring and frontend config environment-driven so local, CI, and Docker environments share the same wiring.
 - Add a MongoDB migration tool (`Mongock`) before user-domain and write-flow document structures start changing.
 
 ### 2. Frontend modernization
@@ -37,16 +41,16 @@ Engineering foundations needed before protected user features and AI integration
 - **[RESOLVED]** **Remove browser-side `mongoose` usage** from `src/features/product/schema/*` immediately — this is architecturally wrong in a browser bundle.
   - **[RESOLVED]** Replace with plain TypeScript interfaces where only typing is needed.
   - **[RESOLVED]** Replace with Zod/Yup schemas where runtime validation is needed.
-- Introduce **Redux Toolkit** for cross-page shared state only:
-  - auth/session, current user profile, collection / wishlist / favorites, AI chat session and recommendation results, async request status for protected features.
+- **[RESOLVED]** Introduce **Redux Toolkit** for cross-page shared state only:
+  - **[RESOLVED]** auth/session, current user profile, collection / wishlist / favorites, AI chat session and recommendation results, async request status for protected features.
 - Keep local component state in `useState`.
-- Use **Redux thunks** for business-level async API calls: session bootstrap, profile load, collection updates, AI requests, protected route data.
+- **[RESOLVED]** Use **Redux thunks** for business-level async API calls: session bootstrap, profile load, collection updates, AI requests, protected route data.
 - Adopt **Formik + Yup** for operationally important forms: profile settings, collection item metadata, admin enrichment forms.
-- Continue with **React Router** — add clear route groups: public routes, authenticated routes, admin routes.
+- **[RESOLVED]** Continue with **React Router** — add clear route groups: public routes, authenticated routes, admin routes.
 - **[RESOLVED]** Replace raw `<a href>` navigation in `Header.tsx` with `Link` / `NavLink` from `react-router-dom` to avoid full page reloads.
 - **[RESOLVED]** Fix self-referencing links in `CollectionPage.tsx` and `FirstDayPage.tsx` (currently both point to the same page they are on).
 - Continue with **Tailwind CSS** — build a shared branding layer from the Ukrposhta stamp palette using Tailwind theme tokens and reusable components.
-- Evolve frontend folder structure toward:
+- **[RESOLVED]** Evolve frontend folder structure toward:
   ```
   src/app/store.ts
   src/app/providers/        (Redux, theme, auth bootstrap)
@@ -59,23 +63,24 @@ Engineering foundations needed before protected user features and AI integration
   ```
 
 ### 3. CI quality gates and code health
-- Add CI (e.g., GitHub Actions) running:
-  - backend tests
-  - frontend lint, build, and tests
+- **[RESOLVED]** Add CI (e.g., GitHub Actions) running:
+  - **[RESOLVED]** backend tests
+  - **[RESOLVED]** frontend lint, build, and tests
   - OpenAPI / contract validation (fail if generated spec diverges from committed `openapi.yaml`)
   - dependency vulnerability scanning (Gradle + npm)
   - Sonar static analysis for maintainability, bugs, code smells, and security hotspots
 - Fail CI on critical and high-severity vulnerabilities once the initial baseline is stabilized.
 - Use SonarLint locally in IDEs; SonarQube or SonarCloud in CI.
-- Add frontend testing: **Vitest + React Testing Library**.
+- **[RESOLVED]** Add frontend testing: **Vitest + React Testing Library**.
   - **[RESOLVED]** Cover: route behaviour, error states, loading states, search filtering, tariff denomination formatting, and Zod schema validation (positive and negative scenarios). 108 tests across 11 suites in `src/__tests__/`.
 
 ### 4. Contract governance and backend consistency
 - Preserve the global error model `{ message, code, status }`.
 - **[RESOLVED]** Move toward centralized exception handling in `GlobalExceptionHandler`; keep controller-local handlers only where a feature truly needs a custom contract.
-- Add explicit handling for: access denied / unauthorized (403/401), validation errors (400), AI provider timeouts/failures, Keycloak/token parsing failures.
+- **[RESOLVED]** Add explicit handling for: access denied / unauthorized (403/401), validation errors (400), AI provider timeouts/failures, Keycloak/token parsing failures.
 - Treat these as the contract sources of truth together: `backend/ecollecto-backend/doc/API.md`, controller annotations, `backend/ecollecto-backend/openapi.yaml`.
-- Rule: any backend DTO change requires matching TypeScript updates in `frontend/ecollecto-ui/src/features/product/types`. **[PARTIAL]** Zod schemas in `types/schemas/` are now the single source of truth for TS types; manual sync still required when Java DTOs change.
+- Rule: any backend DTO change requires matching TypeScript updates in `frontend/ecollecto-ui/src/features/product/types`. 
+- **[PARTIAL]** Zod schemas in `types/schemas/` are now the single source of truth for TS types; manual sync still required when Java DTOs change.
 - Add lightweight contract checks in CI for key DTO payloads: `StampDto`, `FirstDayCoverDto`, `TariffsDto`. **← remaining work to fully close the alignment issue**
 - **[RESOLVED]** Move manual DTO mapping from service methods into dedicated **MapStruct** mappers (`@Mapper(componentModel = "spring")`).
 - **[RESOLVED]** Replace `@Data` on Mongo `@Document` classes with explicit `@Getter`, `@Setter`, and controlled `@ToString` / `@EqualsAndHashCode`.
@@ -93,7 +98,7 @@ Functional expansion centered on user identity, authorization, and protected fea
 
 ### 1. User domain model
 Define user-owned business entities explicitly before adding security broadly:
-- user profile
+- **[RESOLVED]** user profile
 - owned stamps / collection items
 - wishlist
 - favorites
@@ -101,49 +106,49 @@ Define user-owned business entities explicitly before adding security broadly:
 - audit/activity records
 
 ### 2. Product access model
-- Keep catalog browsing public (public can remain publicly explorable).
-- Add protected endpoints only for user-owned and admin-owned data.
+- **[RESOLVED]** Keep catalog browsing public (public can remain publicly explorable).
+- **[RESOLVED]** Add protected endpoints only for user-owned and admin-owned data.
 
 **Public catalog endpoints (keep open):**
-- `GET /api/stamps`, `GET /api/stamp/{id}`, `GET /api/first-day-covers`, `GET /api/designers`, `GET /api/tariffs`
+- **[RESOLVED]** `GET /api/stamps`, `GET /api/stamp/{id}`, `GET /api/first-day-covers`, `GET /api/designers`, `GET /api/tariffs`
 
 **Protected user endpoints:**
-- `GET /api/me`, `GET /api/me/collection`, `POST /api/me/collection/items`, `DELETE /api/me/collection/items/{stampId}`, `GET /api/me/wishlist`, `POST /api/me/wishlist/items`, `GET /api/me/recommendations`
+- **[RESOLVED]** `GET /api/me`, `GET /api/me/collection`, `POST /api/me/collection/items`, `DELETE /api/me/collection/items/{stampId}`, `GET /api/me/wishlist`, `POST /api/me/wishlist/items`, `GET /api/me/recommendations`
 
 **Protected admin endpoints:**
 - `POST /api/admin/ai/enrich-stamp/{id}`
 
 ### 3. Security architecture
-- Use **Keycloak** as the identity provider. Store credentials in Keycloak; persist only application-specific metadata in Mongo.
-- Use **Spring Security** in resource-server mode:
-  - `spring-boot-starter-security`
-  - `spring-boot-starter-oauth2-resource-server`
-  - JWT validation via issuer/JWK configuration
-  - JWT-to-authority mapping for `ROLE_USER`, `ROLE_ADMIN`, `ROLE_AI_ADMIN`
-  - Use `@EnableMethodSecurity` and keep authorization rules close to service logic where ownership rules matter
-- Create a dedicated `common/security/` package for: resource-server config, JWT authority mapping, current-user extraction, protected endpoint rules.
+- **[RESOLVED]** Use **Keycloak** as the identity provider. Store credentials in Keycloak; persist only application-specific metadata in Mongo.
+- **[RESOLVED]** Use **Spring Security** in resource-server mode:
+  - **[RESOLVED]** `spring-boot-starter-security`
+  - **[RESOLVED]** `spring-boot-starter-oauth2-resource-server`
+  - **[RESOLVED]** JWT validation via issuer/JWK configuration
+  - **[RESOLVED]** JWT-to-authority mapping for `ROLE_USER`, `ROLE_ADMIN`, `ROLE_AI_ADMIN`
+  - **[RESOLVED]** Use `@EnableMethodSecurity` and keep authorization rules close to service logic where ownership rules matter
+- **[RESOLVED]** Create a dedicated `common/security/` package for: resource-server config, JWT authority mapping, current-user extraction, protected endpoint rules.
 - Add OpenAPI security schemes for protected endpoints.
-- Use `@AuthenticationPrincipal Jwt jwt` or a dedicated current-user abstraction to extract the Keycloak subject.
-- Avoid old Keycloak-specific Spring adapters — use standard OAuth 2.0 / OIDC Spring Security support.
+- **[RESOLVED]** Use `@AuthenticationPrincipal Jwt jwt` or a dedicated current-user abstraction to extract the Keycloak subject.
+- **[RESOLVED]** Avoid old Keycloak-specific Spring adapters — use standard OAuth 2.0 / OIDC Spring Security support.
 
 ### 4. OAuth 2.0 flow selection
-- **Authorization Code + PKCE** for the React SPA: browser-safe public-client flow, no frontend client secret, supports SSO/refresh/logout/OIDC claims.
+- **[RESOLVED]** **Authorization Code + PKCE** for the React SPA: browser-safe public-client flow, no frontend client secret, supports SSO/refresh/logout/OIDC claims.
 - **Client Credentials** for service-to-service only: admin automation, backend jobs, AI microservice integrations. Do not use from the browser.
 
 ### 5. Keycloak realm setup
-- Realm: `ecollecto`
-- Clients: `ecollecto-ui` (public, Auth Code + PKCE, redirect `http://localhost:5173/*`), `ecollecto-backend` (bearer-only resource server), `ecollecto-ai-service` (confidential, client credentials — stubbed for AI phase)
-- Realm roles: `user`, `admin`, `ai-admin`
+- **[RESOLVED]** Realm: `ecollecto`
+- **[RESOLVED]** Clients: `ecollecto-ui` (public, Auth Code + PKCE, redirect `http://localhost:5173/*`), `ecollecto-backend` (bearer-only resource server), `ecollecto-ai-service` (confidential, client credentials — stubbed for AI phase)
+- **[RESOLVED]** Realm roles: `user`, `admin`, `ai-admin`
 
 ### 6. Frontend security integration
-- Add an OIDC client library (`keycloak-js` or a standards-based OIDC React wrapper).
-- Keep auth session in Redux Toolkit.
-- Add route guards for authenticated and admin-only pages.
-- Add token refresh and logout handling.
-- Keep unauthenticated browsing for public catalog routes.
+- **[RESOLVED]** Add an OIDC client library (`keycloak-js` or a standards-based OIDC React wrapper).
+- **[RESOLVED]** Keep auth session in Redux Toolkit.
+- **[RESOLVED]** Add route guards for authenticated and admin-only pages.
+- **[RESOLVED]** Add token refresh and logout handling.
+- **[RESOLVED]** Keep unauthenticated browsing for public catalog routes.
 - **HTTP layer rules:**
-  - CORS: allow only known frontend origins; keep allowed origins environment-driven.
-  - For direct bearer-token APIs: stateless resource-server mode (no sessions, CSRF disabled).
+  - **[RESOLVED]** CORS: allow only known frontend origins; keep allowed origins environment-driven.
+  - **[RESOLVED]** For direct bearer-token APIs: stateless resource-server mode (no sessions, CSRF disabled).
   - For the later BFF model with Secure HttpOnly cookies: re-evaluate CSRF protection and cookie policies carefully.
   - Enforce TLS in production.
 

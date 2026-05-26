@@ -27,6 +27,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation libs.springdoc.openapi.webmvc.ui
+	implementation libs.spring.boot.starter.security
+	implementation libs.spring.security.oauth2.resource.server
 
 	compileOnly libs.lombok
     annotationProcessor libs.lombok
@@ -35,9 +37,11 @@ dependencies {
     implementation libs.mapstruct
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 	testImplementation 'com.fasterxml.jackson.core:jackson-databind'
 	testImplementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 	testImplementation libs.mockito.junit.jupiter
+	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
 	testCompileOnly libs.lombok
