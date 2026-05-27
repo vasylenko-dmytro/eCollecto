@@ -66,10 +66,10 @@ Engineering foundations needed before protected user features and AI integration
 - **[RESOLVED]** Add CI (e.g., GitHub Actions) running:
   - **[RESOLVED]** backend tests
   - **[RESOLVED]** frontend lint, build, and tests
-  - OpenAPI / contract validation (fail if generated spec diverges from committed `openapi.yaml`)
+  - **[RESOLVED]** OpenAPI / contract validation (fail if generated spec diverges from committed `openapi.yaml`)
   - **[RESOLVED]** dependency vulnerability scanning (Gradle + npm)
   - **[RESOLVED]** Static analysis for maintainability, bugs, code smells, and security hotspots
-- Fail CI on critical and high-severity vulnerabilities once the initial baseline is stabilized.
+- **[RESOLVED]** Fail CI on critical and high-severity vulnerabilities once the initial baseline is stabilized.
 - **[RESOLVED]** CodeQL running in CI.
 - **[RESOLVED]** Add frontend testing: **Vitest + React Testing Library**.
   - **[RESOLVED]** Cover: route behaviour, error states, loading states, search filtering, tariff denomination formatting, and Zod schema validation (positive and negative scenarios). 108 tests across 11 suites in `src/__tests__/`.
@@ -127,7 +127,7 @@ Define user-owned business entities explicitly before adding security broadly:
   - **[RESOLVED]** JWT-to-authority mapping for `ROLE_USER`, `ROLE_ADMIN`, `ROLE_AI_ADMIN`
   - **[RESOLVED]** Use `@EnableMethodSecurity` and keep authorization rules close to service logic where ownership rules matter
 - **[RESOLVED]** Create a dedicated `common/security/` package for: resource-server config, JWT authority mapping, current-user extraction, protected endpoint rules.
-- Add OpenAPI security schemes for protected endpoints.
+- **[RESOLVED]** Add OpenAPI security schemes for protected endpoints.
 - **[RESOLVED]** Use `@AuthenticationPrincipal Jwt jwt` or a dedicated current-user abstraction to extract the Keycloak subject.
 - **[RESOLVED]** Avoid old Keycloak-specific Spring adapters — use standard OAuth 2.0 / OIDC Spring Security support.
 

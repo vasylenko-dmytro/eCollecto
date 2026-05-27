@@ -22,6 +22,15 @@ jobs:
         run: chmod +x ./gradlew
       - name: Run backend tests
         run: ./gradlew :backend:ecollecto-backend:test
+      - name: Check openapi.yaml is up to date
+        # OpenApiSpecTest regenerates openapi.yaml as a side-effect of ./gradlew test.
+        # This step fails the build when the committed spec diverges from what Springdoc generates.
+        # Fix: run  ./gradlew :backend:ecollecto-backend:test  locally and commit the result.
+        run: |
+          git diff --exit-code backend/ecollecto-backend/openapi.yaml || {
+            echo "::error file=backend/ecollecto-backend/openapi.yaml::openapi.yaml is out of date. Run './gradlew :backend:ecollecto-backend:test' locally and commit the regenerated file."
+            exit 1
+          }
       - name: Generate Jacoco report
         run: ./gradlew :backend:ecollecto-backend:jacocoTestReport
 

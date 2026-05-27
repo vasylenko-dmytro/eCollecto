@@ -37,3 +37,11 @@ tasks.register("npmPreview", NpmTask) {
     dependsOn("npmBuild")
     args = ["run", "preview"]
 }
+
+tasks.register("npmTest", NpmTask) {
+    group = "frontend"
+    description = "Run Vitest unit tests (single run, no watch)"
+    dependsOn("npmInstall")
+    args = ["run", "test"]
+}
+
