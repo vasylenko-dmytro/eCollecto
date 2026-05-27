@@ -12,7 +12,7 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "generate:types": "openapi-typescript ../../backend/ecollecto-backend/openapi.yaml -o src/features/product/types/api.generated.ts",
-    "generate:schemas": "openapi-zod-client ../../backend/ecollecto-backend/openapi.yaml -o src/features/product/types/schemas.generated.ts --template ./node_modules/openapi-zod-client/src/templates/schemas-only.hbs",
+    "generate:schemas": "openapi-zod-client ../../backend/ecollecto-backend/openapi.yaml -o src/features/product/types/schemas.generated.ts --template ./node_modules/openapi-zod-client/src/templates/schemas-only.hbs --export-schemas",
     "generate": "npm run generate:types && npm run generate:schemas"
   },
   "dependencies": {
