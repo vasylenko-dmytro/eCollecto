@@ -1,8 +1,11 @@
 package com.vasylenko.ecollectobackend.common.security;
 
+import tools.jackson.databind.ObjectMapper;
+import com.vasylenko.ecollectobackend.dto.ErrorResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -21,9 +24,11 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtAuthorityConverter jwtAuthorityConverter;
+    private final ObjectMapper objectMapper;
 
-    public SecurityConfig(JwtAuthorityConverter jwtAuthorityConverter) {
+    public SecurityConfig(JwtAuthorityConverter jwtAuthorityConverter, ObjectMapper objectMapper) {
         this.jwtAuthorityConverter = jwtAuthorityConverter;
+        this.objectMapper = objectMapper;
     }
 
     @Bean
@@ -45,10 +50,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/tariffs/**").permitAll()
                 // ─── Actuator / OpenAPI ───
                 .requestMatchers("/actuator/health").permitAll()
-                // "/v3/api-docs*"   covers /v3/api-docs  and  /v3/api-docs.yaml (same segment, different suffix)
-                // "/v3/api-docs/**" covers /v3/api-docs/swagger-config and similar sub-paths
                 .requestMatchers("/v3/api-docs*", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
-                // ─── Protected routes (Phase 4) ───
+                // ─── Protected routes ───
                 .requestMatchers("/api/me/**").hasRole("USER")
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 // ─── Everything else requires authentication ───
@@ -56,6 +59,20 @@ public class SecurityConfig {
             )
             .oauth2ResourceServer(oauth2 -> oauth2
                 .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthorityConverter))
+                // Ensure JWT filter-chain 401/403 use the same { message, code, status } shape
+                // as GlobalExceptionHandler — Spring Security bypasses @ControllerAdvice here.
+                .authenticationEntryPoint((request, response, ex) -> {
+                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                    response.setStatus(401);
+                    objectMapper.writeValue(response.getWriter(),
+                            new ErrorResponse("Unauthorized", "UNAUTHORIZED", 401));
+                })
+                .accessDeniedHandler((request, response, ex) -> {
+                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                    response.setStatus(403);
+                    objectMapper.writeValue(response.getWriter(),
+                            new ErrorResponse("Access denied", "FORBIDDEN", 403));
+                })
             );
 
         return http.build();
