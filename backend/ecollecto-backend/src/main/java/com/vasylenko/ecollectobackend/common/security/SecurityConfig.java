@@ -44,7 +44,9 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/tariffs/**").permitAll()
                 // ─── Actuator / OpenAPI ───
                 .requestMatchers("/actuator/health").permitAll()
-                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
+                // "/v3/api-docs*"   covers /v3/api-docs  and  /v3/api-docs.yaml (same segment, different suffix)
+                // "/v3/api-docs/**" covers /v3/api-docs/swagger-config and similar sub-paths
+                .requestMatchers("/v3/api-docs*", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
                 // ─── Protected routes (Phase 4) ───
                 .requestMatchers("/api/me/**").hasRole("USER")
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
