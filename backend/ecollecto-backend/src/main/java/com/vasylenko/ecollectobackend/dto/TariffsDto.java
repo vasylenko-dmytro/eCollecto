@@ -15,12 +15,15 @@ import java.util.Map;
 @AllArgsConstructor
 @Schema(description = "Postal tariff listing by year and currency.")
 public class TariffsDto {
-    @Schema(description = "Tariff document identifier.")
+    @Schema(description = "Tariff document identifier.", requiredMode = Schema.RequiredMode.REQUIRED)
     private String id;
-    @Schema(description = "Tariff year.")
+
+    @Schema(description = "Tariff year.", requiredMode = Schema.RequiredMode.REQUIRED)
     private Integer year;
-    @Schema(description = "Last update timestamp.")
+
+    @Schema(description = "Last update timestamp.", requiredMode = Schema.RequiredMode.REQUIRED)
     private Instant updatedAt;
-    @Schema(description = "Tariffs mapped by currency and letter.")
+
+    @Schema(description = "Tariffs mapped by currency and letter.", requiredMode = Schema.RequiredMode.REQUIRED)
     private Map<String, Map<String, Double>> currencies;
 }

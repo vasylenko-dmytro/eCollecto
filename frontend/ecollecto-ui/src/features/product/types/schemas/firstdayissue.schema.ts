@@ -1,20 +1,8 @@
-import { z } from 'zod';
+/**
+ * Re-exports the generated FirstDayCoverDto schema under the legacy name used by the codebase.
+ * Schema shape is derived from backend/ecollecto-backend/openapi.yaml via openapi-zod-client.
+ * Run `npm run generate` after any backend DTO change to keep this in sync.
+ */
+import { schemas } from '../schemas.generated';
 
-export const FirstDayIssueSchema = z.object({
-  postmark_id: z.string().nullable(),
-  envelope_id: z.string().nullable(),
-  name: z.string(),
-  description: z.string(),
-  postmarkSKU: z.number().nullable(),
-  envelopeSKU: z.number().nullable(),
-  designer: z.string().nullable(),
-  release: z.object({
-    year: z.number(),
-    date: z.string(),
-    printQuantity: z.number(),
-  }),
-  images: z.object({
-    envelope: z.string().nullable(),
-    postmark: z.string().nullable(),
-  }),
-});
+export const FirstDayIssueSchema = schemas.FirstDayCoverDto;

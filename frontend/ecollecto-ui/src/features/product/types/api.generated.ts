@@ -223,19 +223,19 @@ export interface components {
         /** @description Postal tariff listing by year and currency. */
         TariffsDto: {
             /** @description Tariff document identifier. */
-            id?: string;
+            id: string;
             /**
              * Format: int32
              * @description Tariff year.
              */
-            year?: number;
+            year: number;
             /**
              * Format: date-time
              * @description Last update timestamp.
              */
-            updatedAt?: string;
+            updatedAt: string;
             /** @description Tariffs mapped by currency and letter. */
-            currencies?: {
+            currencies: {
                 [key: string]: {
                     [key: string]: number;
                 };
@@ -244,51 +244,51 @@ export interface components {
         /** @description Stamp details. */
         StampDto: {
             /** @description Stamp name. */
-            name?: string;
+            name: string;
             /** @description Stamp description. */
-            description?: string;
+            description: string;
             /** @description Stamp metadata. */
-            meta?: components["schemas"]["StampMeta"];
+            meta: components["schemas"]["StampMeta"];
             /** @description Release information. */
-            release?: components["schemas"]["StampRelease"];
+            release: components["schemas"]["StampRelease"];
             /** @description Image URLs for the stamp. */
-            images?: components["schemas"]["StampImages"];
+            images: components["schemas"]["StampImages"];
             /** @description Stamp identifier. */
-            stamp_id?: string;
+            stamp_id: string;
             /**
              * Format: int32
              * @description Stamp SKU.
              */
-            stampSKU?: number;
+            stampSKU: number;
         };
         /** @description Image URLs for a stamp. */
         StampImages: {
             /** @description Original image URL. */
-            original?: string;
+            original: string;
             /** @description Small image URL. */
-            small?: string;
+            small: string;
             /** @description Pane image URL. */
-            pane?: string;
+            pane: string | null;
         };
         /** @description Stamp metadata values. */
         StampMeta: {
             /** @description Denomination text. */
-            denomination?: string;
+            denomination: string;
             /** @description Series name. */
-            series?: string;
+            series: string | null;
             /** @description Designer name. */
-            designer?: string;
+            designer: string | null;
             /** @description Perforation indicator. */
-            perforation?: boolean;
+            perforation: boolean;
             /** @description Themes associated with the stamp. */
-            themes?: string;
+            themes: string | null;
             /** @description Europa stamp indicator. */
-            europa?: boolean;
+            europa: boolean;
             /**
              * Format: int32
              * @description Number of stamps per pane.
              */
-            stampsPerPane?: number;
+            stampsPerPane: number | null;
         };
         /** @description Release details for a stamp. */
         StampRelease: {
@@ -296,18 +296,18 @@ export interface components {
              * Format: int32
              * @description Release year.
              */
-            year?: number;
+            year: number;
             /** @description Release date. */
-            date?: string;
+            date: string;
             /**
              * Format: int32
              * @description Print quantity.
              */
-            printQuantity?: number;
+            printQuantity: number;
             /** @description Mass issue flag. */
-            isMassIssue?: boolean;
+            isMassIssue: boolean;
             /** @description Availability flag. */
-            isAvailable?: boolean;
+            isAvailable: boolean;
         };
         /** @description Authenticated user profile. */
         UserDto: {
@@ -330,36 +330,36 @@ export interface components {
         /** @description First day cover details. */
         FirstDayCoverDto: {
             /** @description Name of the first day cover. */
-            name?: string;
+            name: string;
             /** @description Short description. */
-            description?: string;
+            description: string;
             /** @description Designer name. */
-            designer?: string;
+            designer: string | null;
             /** @description Release information. */
-            release?: components["schemas"]["FirstDayCoverRelease"];
+            release: components["schemas"]["FirstDayCoverRelease"];
             /** @description Image URLs for the cover. */
-            images?: components["schemas"]["FirstDayCoverImages"];
+            images: components["schemas"]["FirstDayCoverImages"];
             /** @description Postmark identifier. */
-            postmark_id?: string;
+            postmark_id: string | null;
             /** @description Envelope identifier. */
-            envelope_id?: string;
+            envelope_id: string | null;
             /**
              * Format: int32
              * @description Postmark SKU.
              */
-            postmarkSKU?: number;
+            postmarkSKU: number | null;
             /**
              * Format: int32
              * @description Envelope SKU.
              */
-            envelopeSKU?: number;
+            envelopeSKU: number | null;
         };
         /** @description Image URLs for a first day cover. */
         FirstDayCoverImages: {
             /** @description Envelope image URL. */
-            envelope?: string;
+            envelope: string | null;
             /** @description Postmark image URL. */
-            postmark?: string;
+            postmark: string | null;
         };
         /** @description Release details for a first day cover. */
         FirstDayCoverRelease: {
@@ -367,21 +367,21 @@ export interface components {
              * Format: int32
              * @description Release year.
              */
-            year?: number;
+            year: number;
             /** @description Release date. */
-            date?: string;
+            date: string;
             /**
              * Format: int32
              * @description Print quantity.
              */
-            printQuantity?: number;
+            printQuantity: number;
         };
         /** @description Designer metadata. */
         DesignerDto: {
             /** @description Designer name. */
-            name?: string;
+            name: string;
             /** @description Designer identifier. */
-            designer_id?: string;
+            designer_id: string;
         };
     };
     responses: never;

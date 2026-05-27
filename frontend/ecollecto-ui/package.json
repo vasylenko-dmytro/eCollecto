@@ -11,7 +11,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "generate:types": "openapi-typescript ../../backend/ecollecto-backend/openapi.yaml -o src/features/product/types/api.generated.ts"
+    "generate:types": "openapi-typescript ../../backend/ecollecto-backend/openapi.yaml -o src/features/product/types/api.generated.ts",
+    "generate:schemas": "openapi-zod-client ../../backend/ecollecto-backend/openapi.yaml -o src/features/product/types/schemas.generated.ts --template ./node_modules/openapi-zod-client/src/templates/schemas-only.hbs",
+    "generate": "npm run generate:types && npm run generate:schemas"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.12.0",
@@ -40,7 +42,7 @@
     "globals": "^16.5.0",
     "jsdom": "^29.1.1",
     "openapi-typescript": "^7.13.0",
-    "openapi-typescript": "^7.13.0",
+    "openapi-zod-client": "^1.18.3",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.4",
     "vite": "^7.3.3",

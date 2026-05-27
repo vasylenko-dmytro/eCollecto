@@ -14,33 +14,35 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Schema(description = "First day cover details.")
 public class FirstDayCoverDto {
-    @Schema(description = "Postmark identifier.")
+    @Schema(description = "Postmark identifier.", requiredMode = Schema.RequiredMode.REQUIRED, nullable = true)
     @JsonProperty("postmark_id")
     private String postmarkId;
 
-    @Schema(description = "Envelope identifier.")
+    @Schema(description = "Envelope identifier.", requiredMode = Schema.RequiredMode.REQUIRED, nullable = true)
     @JsonProperty("envelope_id")
     private String envelopeId;
 
-    @Schema(description = "Name of the first day cover.")
+    @Schema(description = "Name of the first day cover.", requiredMode = Schema.RequiredMode.REQUIRED)
     private String name;
-    @Schema(description = "Short description.")
+
+    @Schema(description = "Short description.", requiredMode = Schema.RequiredMode.REQUIRED)
     private String description;
 
-    @Schema(description = "Postmark SKU.")
+    @Schema(description = "Postmark SKU.", requiredMode = Schema.RequiredMode.REQUIRED, nullable = true)
     @JsonProperty("postmarkSKU")
     private Integer postmarkSKU;
 
-    @Schema(description = "Envelope SKU.")
+    @Schema(description = "Envelope SKU.", requiredMode = Schema.RequiredMode.REQUIRED, nullable = true)
     @JsonProperty("envelopeSKU")
     private Integer envelopeSKU;
 
-    @Schema(description = "Designer name.")
+    @Schema(description = "Designer name.", requiredMode = Schema.RequiredMode.REQUIRED, nullable = true)
     private String designer;
 
-    @Schema(description = "Release information.")
+    @Schema(description = "Release information.", requiredMode = Schema.RequiredMode.REQUIRED)
     private ReleaseDto release;
-    @Schema(description = "Image URLs for the cover.")
+
+    @Schema(description = "Image URLs for the cover.", requiredMode = Schema.RequiredMode.REQUIRED)
     private ImagesDto images;
 
     @Data
@@ -49,12 +51,13 @@ public class FirstDayCoverDto {
     @AllArgsConstructor
     @Schema(name = "FirstDayCoverRelease", description = "Release details for a first day cover.")
     public static class ReleaseDto {
-        @Schema(description = "Release year.")
+        @Schema(description = "Release year.", requiredMode = Schema.RequiredMode.REQUIRED)
         private Integer year;
-        @Schema(description = "Release date.")
+
+        @Schema(description = "Release date.", requiredMode = Schema.RequiredMode.REQUIRED)
         private String date;
 
-        @Schema(description = "Print quantity.")
+        @Schema(description = "Print quantity.", requiredMode = Schema.RequiredMode.REQUIRED)
         @JsonProperty("printQuantity")
         private Integer printQuantity;
     }
@@ -65,9 +68,10 @@ public class FirstDayCoverDto {
     @AllArgsConstructor
     @Schema(name = "FirstDayCoverImages", description = "Image URLs for a first day cover.")
     public static class ImagesDto {
-        @Schema(description = "Envelope image URL.")
+        @Schema(description = "Envelope image URL.", requiredMode = Schema.RequiredMode.REQUIRED, nullable = true)
         private String envelope;
-        @Schema(description = "Postmark image URL.")
+
+        @Schema(description = "Postmark image URL.", requiredMode = Schema.RequiredMode.REQUIRED, nullable = true)
         private String postmark;
     }
 }

@@ -1,10 +1,8 @@
-import { z } from 'zod';
+/**
+ * Re-exports the generated TariffsDto schema under the legacy name used by the codebase.
+ * Schema shape is derived from backend/ecollecto-backend/openapi.yaml via openapi-zod-client.
+ * Run `npm run generate` after any backend DTO change to keep this in sync.
+ */
+import { schemas } from '../schemas.generated';
 
-// Matches TariffsDto.java — Instant is serialized as ISO 8601 string
-export const TariffsSchema = z.object({
-  id: z.string(),
-  year: z.number(),
-  updatedAt: z.string(),
-  currencies: z.record(z.string(), z.record(z.string(), z.number())),
-});
-
+export const TariffsSchema = schemas.TariffsDto;

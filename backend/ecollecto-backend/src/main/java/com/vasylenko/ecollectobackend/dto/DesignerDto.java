@@ -13,10 +13,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Schema(description = "Designer metadata.")
 public class DesignerDto {
-    @Schema(description = "Designer identifier.")
+    @Schema(description = "Designer identifier.", requiredMode = Schema.RequiredMode.REQUIRED)
     @JsonProperty("designer_id")
     private String designerId;
 
-    @Schema(description = "Designer name.")
+    @Schema(description = "Designer name.", requiredMode = Schema.RequiredMode.REQUIRED)
     private String name;
 }

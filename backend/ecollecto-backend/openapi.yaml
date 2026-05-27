@@ -478,6 +478,11 @@ components:
               type: number
               format: double
           description: Tariffs mapped by currency and letter.
+      required:
+      - currencies
+      - id
+      - updatedAt
+      - year
     StampDto:
       type: object
       description: Stamp details.
@@ -504,6 +509,14 @@ components:
           type: integer
           format: int32
           description: Stamp SKU.
+      required:
+      - description
+      - images
+      - meta
+      - name
+      - release
+      - stampSKU
+      - stamp_id
     StampImages:
       type: object
       description: Image URLs for a stamp.
@@ -515,8 +528,14 @@ components:
           type: string
           description: Small image URL.
         pane:
-          type: string
+          type:
+          - string
+          - "null"
           description: Pane image URL.
+      required:
+      - original
+      - pane
+      - small
     StampMeta:
       type: object
       description: Stamp metadata values.
@@ -525,24 +544,40 @@ components:
           type: string
           description: Denomination text.
         series:
-          type: string
+          type:
+          - string
+          - "null"
           description: Series name.
         designer:
-          type: string
+          type:
+          - string
+          - "null"
           description: Designer name.
         perforation:
           type: boolean
           description: Perforation indicator.
         themes:
-          type: string
+          type:
+          - string
+          - "null"
           description: Themes associated with the stamp.
         europa:
           type: boolean
           description: Europa stamp indicator.
         stampsPerPane:
-          type: integer
+          type:
+          - integer
+          - "null"
           format: int32
           description: Number of stamps per pane.
+      required:
+      - denomination
+      - designer
+      - europa
+      - perforation
+      - series
+      - stampsPerPane
+      - themes
     StampRelease:
       type: object
       description: Release details for a stamp.
@@ -564,6 +599,12 @@ components:
         isAvailable:
           type: boolean
           description: Availability flag.
+      required:
+      - date
+      - isAvailable
+      - isMassIssue
+      - printQuantity
+      - year
     UserDto:
       type: object
       description: Authenticated user profile.
@@ -591,7 +632,9 @@ components:
           type: string
           description: Short description.
         designer:
-          type: string
+          type:
+          - string
+          - "null"
           description: Designer name.
         release:
           $ref: "#/components/schemas/FirstDayCoverRelease"
@@ -600,29 +643,54 @@ components:
           $ref: "#/components/schemas/FirstDayCoverImages"
           description: Image URLs for the cover.
         postmark_id:
-          type: string
+          type:
+          - string
+          - "null"
           description: Postmark identifier.
         envelope_id:
-          type: string
+          type:
+          - string
+          - "null"
           description: Envelope identifier.
         postmarkSKU:
-          type: integer
+          type:
+          - integer
+          - "null"
           format: int32
           description: Postmark SKU.
         envelopeSKU:
-          type: integer
+          type:
+          - integer
+          - "null"
           format: int32
           description: Envelope SKU.
+      required:
+      - description
+      - designer
+      - envelopeSKU
+      - envelope_id
+      - images
+      - name
+      - postmarkSKU
+      - postmark_id
+      - release
     FirstDayCoverImages:
       type: object
       description: Image URLs for a first day cover.
       properties:
         envelope:
-          type: string
+          type:
+          - string
+          - "null"
           description: Envelope image URL.
         postmark:
-          type: string
+          type:
+          - string
+          - "null"
           description: Postmark image URL.
+      required:
+      - envelope
+      - postmark
     FirstDayCoverRelease:
       type: object
       description: Release details for a first day cover.
@@ -638,6 +706,10 @@ components:
           type: integer
           format: int32
           description: Print quantity.
+      required:
+      - date
+      - printQuantity
+      - year
     DesignerDto:
       type: object
       description: Designer metadata.
@@ -648,6 +720,9 @@ components:
         designer_id:
           type: string
           description: Designer identifier.
+      required:
+      - designer_id
+      - name
   securitySchemes:
     openIdConnect:
       type: openIdConnect
