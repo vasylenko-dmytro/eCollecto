@@ -27,7 +27,7 @@ jobs:
         # This step fails the build when the committed spec diverges from what Springdoc generates.
         # Fix: run  ./gradlew :backend:ecollecto-backend:test  locally and commit the result.
         run: |
-          git diff --exit-code backend/ecollecto-backend/openapi.yaml || {
+          git diff --exit-code -- backend/ecollecto-backend/openapi.yaml || {
             echo "::error file=backend/ecollecto-backend/openapi.yaml::openapi.yaml is out of date. Run './gradlew :backend:ecollecto-backend:test' locally and commit the regenerated file."
             exit 1
           }
@@ -50,7 +50,8 @@ jobs:
         # Fails if the committed file is stale; fix: run 'npm run generate:types' locally and commit.
         run: |
           cd frontend/ecollecto-ui && npm run generate:types
-          git diff --exit-code frontend/ecollecto-ui/src/features/product/types/api.generated.ts || {
+          cd "$GITHUB_WORKSPACE"
+          git diff --exit-code -- frontend/ecollecto-ui/src/features/product/types/api.generated.ts || {
             echo "::error file=frontend/ecollecto-ui/src/features/product/types/api.generated.ts::api.generated.ts is out of date. Run 'npm run generate:types' in frontend/ecollecto-ui and commit the result."
             exit 1
           }
