@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -46,7 +47,7 @@ public class FirstDayCoverDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Schema(description = "Release details for a first day cover.")
+    @Schema(name = "FirstDayCoverRelease", description = "Release details for a first day cover.")
     public static class ReleaseDto {
         @Schema(description = "Release year.")
         private Integer year;
@@ -62,7 +63,7 @@ public class FirstDayCoverDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Schema(description = "Image URLs for a first day cover.")
+    @Schema(name = "FirstDayCoverImages", description = "Image URLs for a first day cover.")
     public static class ImagesDto {
         @Schema(description = "Envelope image URL.")
         private String envelope;

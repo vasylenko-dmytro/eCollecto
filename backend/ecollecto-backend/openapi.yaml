@@ -478,17 +478,46 @@ components:
               type: number
               format: double
           description: Tariffs mapped by currency and letter.
-    ImagesDto:
+    StampDto:
       type: object
-      description: Image URLs for a first day cover.
+      description: Stamp details.
       properties:
-        envelope:
+        name:
           type: string
-          description: Envelope image URL.
-        postmark:
+          description: Stamp name.
+        description:
           type: string
-          description: Postmark image URL.
-    MetaDto:
+          description: Stamp description.
+        meta:
+          $ref: "#/components/schemas/StampMeta"
+          description: Stamp metadata.
+        release:
+          $ref: "#/components/schemas/StampRelease"
+          description: Release information.
+        images:
+          $ref: "#/components/schemas/StampImages"
+          description: Image URLs for the stamp.
+        stamp_id:
+          type: string
+          description: Stamp identifier.
+        stampSKU:
+          type: integer
+          format: int32
+          description: Stamp SKU.
+    StampImages:
+      type: object
+      description: Image URLs for a stamp.
+      properties:
+        original:
+          type: string
+          description: Original image URL.
+        small:
+          type: string
+          description: Small image URL.
+        pane:
+          type: string
+          description: Pane image URL.
+    StampMeta:
       type: object
       description: Stamp metadata values.
       properties:
@@ -514,9 +543,9 @@ components:
           type: integer
           format: int32
           description: Number of stamps per pane.
-    ReleaseDto:
+    StampRelease:
       type: object
-      description: Release details for a first day cover.
+      description: Release details for a stamp.
       properties:
         year:
           type: integer
@@ -529,32 +558,12 @@ components:
           type: integer
           format: int32
           description: Print quantity.
-    StampDto:
-      type: object
-      description: Stamp details.
-      properties:
-        name:
-          type: string
-          description: Stamp name.
-        description:
-          type: string
-          description: Stamp description.
-        meta:
-          $ref: "#/components/schemas/MetaDto"
-          description: Stamp metadata.
-        release:
-          $ref: "#/components/schemas/ReleaseDto"
-          description: Release information.
-        images:
-          $ref: "#/components/schemas/ImagesDto"
-          description: Image URLs for the stamp.
-        stamp_id:
-          type: string
-          description: Stamp identifier.
-        stampSKU:
-          type: integer
-          format: int32
-          description: Stamp SKU.
+        isMassIssue:
+          type: boolean
+          description: Mass issue flag.
+        isAvailable:
+          type: boolean
+          description: Availability flag.
     UserDto:
       type: object
       description: Authenticated user profile.
@@ -585,10 +594,10 @@ components:
           type: string
           description: Designer name.
         release:
-          $ref: "#/components/schemas/ReleaseDto"
+          $ref: "#/components/schemas/FirstDayCoverRelease"
           description: Release information.
         images:
-          $ref: "#/components/schemas/ImagesDto"
+          $ref: "#/components/schemas/FirstDayCoverImages"
           description: Image URLs for the cover.
         postmark_id:
           type: string
@@ -604,6 +613,31 @@ components:
           type: integer
           format: int32
           description: Envelope SKU.
+    FirstDayCoverImages:
+      type: object
+      description: Image URLs for a first day cover.
+      properties:
+        envelope:
+          type: string
+          description: Envelope image URL.
+        postmark:
+          type: string
+          description: Postmark image URL.
+    FirstDayCoverRelease:
+      type: object
+      description: Release details for a first day cover.
+      properties:
+        year:
+          type: integer
+          format: int32
+          description: Release year.
+        date:
+          type: string
+          description: Release date.
+        printQuantity:
+          type: integer
+          format: int32
+          description: Print quantity.
     DesignerDto:
       type: object
       description: Designer metadata.

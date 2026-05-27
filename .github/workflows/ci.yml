@@ -45,6 +45,15 @@ jobs:
           cache-dependency-path: frontend/ecollecto-ui/package-lock.json
       - name: Install dependencies
         run: cd frontend/ecollecto-ui && npm ci
+      - name: Check generated TypeScript types are up to date
+        # npm run generate:types reads openapi.yaml and regenerates api.generated.ts.
+        # Fails if the committed file is stale; fix: run 'npm run generate:types' locally and commit.
+        run: |
+          cd frontend/ecollecto-ui && npm run generate:types
+          git diff --exit-code frontend/ecollecto-ui/src/features/product/types/api.generated.ts || {
+            echo "::error file=frontend/ecollecto-ui/src/features/product/types/api.generated.ts::api.generated.ts is out of date. Run 'npm run generate:types' in frontend/ecollecto-ui and commit the result."
+            exit 1
+          }
       - name: Lint
         run: cd frontend/ecollecto-ui && npm run lint
       - name: Build

@@ -37,7 +37,7 @@ public class StampDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Schema(description = "Stamp metadata values.")
+    @Schema(name = "StampMeta", description = "Stamp metadata values.")
     public static class MetaDto {
         @Schema(description = "Denomination text.")
         private String denomination;
@@ -62,7 +62,7 @@ public class StampDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Schema(description = "Release details for a stamp.")
+    @Schema(name = "StampRelease", description = "Release details for a stamp.")
     public static class ReleaseDto {
         @Schema(description = "Release year.")
         private Integer year;
@@ -86,7 +86,7 @@ public class StampDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Schema(description = "Image URLs for a stamp.")
+    @Schema(name = "StampImages", description = "Image URLs for a stamp.")
     public static class ImagesDto {
         @Schema(description = "Original image URL.")
         private String original;
