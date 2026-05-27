@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.security.SecuritySchemes;
+import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.context.annotation.Configuration;
 
@@ -29,12 +30,15 @@ import org.springframework.context.annotation.Configuration;
                         "Public catalog endpoints are accessible without authentication. " +
                         "Protected endpoints require a valid Bearer JWT issued by Keycloak."
         ),
+        servers = {
+                @Server(url = "http://localhost:8080", description = "Local development server")
+        },
         tags = {
                 @Tag(name = "Stamps",           description = "Stamp lookup endpoints."),
                 @Tag(name = "First Day Covers", description = "First day cover lookup endpoints."),
                 @Tag(name = "Designers",        description = "Designer lookup endpoints."),
                 @Tag(name = "Tariffs",          description = "Tariff lookup endpoints."),
-                @Tag(name = "User",             description = "User profile endpoints (protected — requires Bearer JWT).")
+                @Tag(name = "User",             description = "User profile endpoints (protected - requires Bearer JWT).")
         }
 )
 @SecuritySchemes({

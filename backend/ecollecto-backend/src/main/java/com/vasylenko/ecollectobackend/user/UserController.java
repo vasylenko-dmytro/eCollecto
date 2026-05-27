@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/me")
-@Tag(name = "User", description = "User profile endpoints (protected — requires Bearer JWT).")
+@Tag(name = "User", description = "User profile endpoints (protected - requires Bearer JWT).")
 public class UserController {
 
     private final UserService userService;

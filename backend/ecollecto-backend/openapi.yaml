@@ -1,0 +1,628 @@
+openapi: 3.1.0
+info:
+  title: eCollecto API
+  description: eCollecto philatelic collection REST API. Public catalog endpoints
+    are accessible without authentication. Protected endpoints require a valid Bearer
+    JWT issued by Keycloak.
+  version: v1
+servers:
+- url: http://localhost:8080
+  description: Local development server
+tags:
+- name: Designers
+  description: Designer lookup endpoints.
+- name: First Day Covers
+  description: First day cover lookup endpoints.
+- name: User
+  description: User profile endpoints (protected - requires Bearer JWT).
+- name: Tariffs
+  description: Tariff lookup endpoints.
+- name: Stamps
+  description: Stamp lookup endpoints.
+paths:
+  /api/tariffs:
+    get:
+      tags:
+      - Tariffs
+      summary: List tariffs
+      description: Retrieve all tariffs.
+      operationId: getAllTariffs
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "200":
+          description: Tariffs retrieved.
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TariffsDto"
+        "500":
+          description: Server error.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/tariffs/{year}/{currency}:
+    get:
+      tags:
+      - Tariffs
+      summary: List tariffs by currency
+      description: Retrieve tariffs for a year and currency.
+      operationId: getAllTariffsByCurrency
+      parameters:
+      - name: year
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: currency
+        in: path
+        required: true
+        schema:
+          type: string
+          enum:
+          - UAH
+          - USD
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "200":
+          description: Tariffs retrieved.
+          content:
+            '*/*':
+              schema:
+                type: string
+        "404":
+          description: Tariffs not found.
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: number
+                  format: double
+        "500":
+          description: Server error.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/tariffs/{year}/{currency}/{letter}:
+    get:
+      tags:
+      - Tariffs
+      summary: Get tariff
+      description: "Retrieve a single tariff by year, currency, and letter."
+      operationId: getTariff
+      parameters:
+      - name: year
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: currency
+        in: path
+        required: true
+        schema:
+          type: string
+          enum:
+          - UAH
+          - USD
+      - name: letter
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "200":
+          description: Tariff retrieved.
+          content:
+            '*/*':
+              schema:
+                type: number
+                format: double
+        "404":
+          description: Tariff not found.
+          content:
+            '*/*':
+              schema:
+                type: number
+                format: double
+        "500":
+          description: Server error.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/stamps:
+    get:
+      tags:
+      - Stamps
+      summary: List stamps
+      description: Retrieve all stamps.
+      operationId: getAllStamps
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "200":
+          description: Stamps retrieved.
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/StampDto"
+        "500":
+          description: Server error.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/stamp/{id}:
+    get:
+      tags:
+      - Stamps
+      summary: Get stamp
+      description: Retrieve a stamp by id.
+      operationId: getStampById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "200":
+          description: Stamp found.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/StampDto"
+        "404":
+          description: Stamp not found.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/StampDto"
+        "500":
+          description: Server error.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/me:
+    get:
+      tags:
+      - User
+      summary: Get user profile
+      description: Returns the authenticated user's profile. Creates the profile on
+        first call if one does not yet exist.
+      operationId: getProfile
+      responses:
+        "401":
+          description: Missing or invalid JWT token.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Insufficient permissions.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "200":
+          description: User profile retrieved.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/UserDto"
+        "500":
+          description: Server error.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+      - bearerAuth: []
+  /api/first-day-covers:
+    get:
+      tags:
+      - First Day Covers
+      summary: List first day covers
+      description: Retrieve all first day covers.
+      operationId: getAllFirstDayCovers
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "200":
+          description: First day covers retrieved.
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/FirstDayCoverDto"
+        "500":
+          description: Server error.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/first-day-covers/{id}:
+    get:
+      tags:
+      - First Day Covers
+      summary: Get first day cover
+      description: Retrieve a first day cover by id.
+      operationId: getFirstDayCoverById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "200":
+          description: First day cover found.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/FirstDayCoverDto"
+        "404":
+          description: First day cover not found.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/FirstDayCoverDto"
+        "500":
+          description: Server error.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/designers:
+    get:
+      tags:
+      - Designers
+      summary: List designers
+      description: Retrieve all designers.
+      operationId: getAllDesigners
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "200":
+          description: Designers retrieved.
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DesignerDto"
+        "500":
+          description: Server error.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/designer/{id}:
+    get:
+      tags:
+      - Designers
+      summary: Get designer
+      description: Retrieve a designer by id.
+      operationId: getDesignerById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "200":
+          description: Designer found.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/DesignerDto"
+        "404":
+          description: Designer not found.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/DesignerDto"
+        "500":
+          description: Server error.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      description: Error response payload.
+      properties:
+        message:
+          type: string
+          description: Error message.
+        code:
+          type: string
+          description: Error code.
+        status:
+          type: integer
+          format: int32
+          description: HTTP status code.
+    TariffsDto:
+      type: object
+      description: Postal tariff listing by year and currency.
+      properties:
+        id:
+          type: string
+          description: Tariff document identifier.
+        year:
+          type: integer
+          format: int32
+          description: Tariff year.
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp.
+        currencies:
+          type: object
+          additionalProperties:
+            type: object
+            additionalProperties:
+              type: number
+              format: double
+          description: Tariffs mapped by currency and letter.
+    ImagesDto:
+      type: object
+      description: Image URLs for a first day cover.
+      properties:
+        envelope:
+          type: string
+          description: Envelope image URL.
+        postmark:
+          type: string
+          description: Postmark image URL.
+    MetaDto:
+      type: object
+      description: Stamp metadata values.
+      properties:
+        denomination:
+          type: string
+          description: Denomination text.
+        series:
+          type: string
+          description: Series name.
+        designer:
+          type: string
+          description: Designer name.
+        perforation:
+          type: boolean
+          description: Perforation indicator.
+        themes:
+          type: string
+          description: Themes associated with the stamp.
+        europa:
+          type: boolean
+          description: Europa stamp indicator.
+        stampsPerPane:
+          type: integer
+          format: int32
+          description: Number of stamps per pane.
+    ReleaseDto:
+      type: object
+      description: Release details for a first day cover.
+      properties:
+        year:
+          type: integer
+          format: int32
+          description: Release year.
+        date:
+          type: string
+          description: Release date.
+        printQuantity:
+          type: integer
+          format: int32
+          description: Print quantity.
+    StampDto:
+      type: object
+      description: Stamp details.
+      properties:
+        name:
+          type: string
+          description: Stamp name.
+        description:
+          type: string
+          description: Stamp description.
+        meta:
+          $ref: "#/components/schemas/MetaDto"
+          description: Stamp metadata.
+        release:
+          $ref: "#/components/schemas/ReleaseDto"
+          description: Release information.
+        images:
+          $ref: "#/components/schemas/ImagesDto"
+          description: Image URLs for the stamp.
+        stamp_id:
+          type: string
+          description: Stamp identifier.
+        stampSKU:
+          type: integer
+          format: int32
+          description: Stamp SKU.
+    UserDto:
+      type: object
+      description: Authenticated user profile.
+      properties:
+        id:
+          type: string
+          description: Keycloak user UUID (sub claim).
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+        email:
+          type: string
+          description: User email address.
+          example: testuser@ecollecto.dev
+        name:
+          type: string
+          description: User display name.
+          example: Test User
+    FirstDayCoverDto:
+      type: object
+      description: First day cover details.
+      properties:
+        name:
+          type: string
+          description: Name of the first day cover.
+        description:
+          type: string
+          description: Short description.
+        designer:
+          type: string
+          description: Designer name.
+        release:
+          $ref: "#/components/schemas/ReleaseDto"
+          description: Release information.
+        images:
+          $ref: "#/components/schemas/ImagesDto"
+          description: Image URLs for the cover.
+        postmark_id:
+          type: string
+          description: Postmark identifier.
+        envelope_id:
+          type: string
+          description: Envelope identifier.
+        postmarkSKU:
+          type: integer
+          format: int32
+          description: Postmark SKU.
+        envelopeSKU:
+          type: integer
+          format: int32
+          description: Envelope SKU.
+    DesignerDto:
+      type: object
+      description: Designer metadata.
+      properties:
+        name:
+          type: string
+          description: Designer name.
+        designer_id:
+          type: string
+          description: Designer identifier.
+  securitySchemes:
+    openIdConnect:
+      type: openIdConnect
+      description: OpenID Connect discovery for the eCollecto Keycloak realm. Use
+        the ecollecto-ui public client with PKCE (S256) for the browser flow.
+      openIdConnectUrl: http://localhost:8180/realms/ecollecto/.well-known/openid-configuration
+    bearerAuth:
+      type: http
+      description: "JWT Bearer token issued by Keycloak (Authorization Code + PKCE).\
+        \ Obtain a token from: http://localhost:8180/realms/ecollecto/protocol/openid-connect/token"
+      scheme: bearer
+      bearerFormat: JWT
