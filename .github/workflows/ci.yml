@@ -55,6 +55,16 @@ jobs:
             echo "::error file=frontend/ecollecto-ui/src/features/product/types/api.generated.ts::api.generated.ts is out of date. Run 'npm run generate:types' in frontend/ecollecto-ui and commit the result."
             exit 1
           }
+      - name: Check generated Zod schemas are up to date
+        # npm run generate:schemas reads openapi.yaml and regenerates schemas.generated.ts.
+        # Fails if the committed file is stale; fix: run 'npm run generate:schemas' locally and commit.
+        run: |
+          cd frontend/ecollecto-ui && npm run generate:schemas
+          cd "$GITHUB_WORKSPACE"
+          git diff --exit-code -- frontend/ecollecto-ui/src/features/product/types/schemas.generated.ts || {
+            echo "::error file=frontend/ecollecto-ui/src/features/product/types/schemas.generated.ts::schemas.generated.ts is out of date. Run 'npm run generate:schemas' in frontend/ecollecto-ui and commit the result."
+            exit 1
+          }
       - name: Lint
         run: cd frontend/ecollecto-ui && npm run lint
       - name: Build
