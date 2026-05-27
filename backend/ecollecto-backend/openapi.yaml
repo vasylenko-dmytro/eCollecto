@@ -28,6 +28,14 @@ paths:
       description: Retrieve all tariffs.
       operationId: getAllTariffs
       responses:
+        "200":
+          description: Tariffs retrieved.
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TariffsDto"
         "401":
           description: Unauthorized
           content:
@@ -40,14 +48,6 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-        "200":
-          description: Tariffs retrieved.
-          content:
-            '*/*':
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/TariffsDto"
         "500":
           description: Server error.
           content:
@@ -77,6 +77,12 @@ paths:
           - UAH
           - USD
       responses:
+        "200":
+          description: Tariffs retrieved.
+          content:
+            '*/*':
+              schema:
+                type: string
         "401":
           description: Unauthorized
           content:
@@ -89,12 +95,6 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-        "200":
-          description: Tariffs retrieved.
-          content:
-            '*/*':
-              schema:
-                type: string
         "404":
           description: Tariffs not found.
           content:
@@ -138,6 +138,13 @@ paths:
         schema:
           type: string
       responses:
+        "200":
+          description: Tariff retrieved.
+          content:
+            '*/*':
+              schema:
+                type: number
+                format: double
         "401":
           description: Unauthorized
           content:
@@ -150,13 +157,6 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-        "200":
-          description: Tariff retrieved.
-          content:
-            '*/*':
-              schema:
-                type: number
-                format: double
         "404":
           description: Tariff not found.
           content:
@@ -178,6 +178,14 @@ paths:
       description: Retrieve all stamps.
       operationId: getAllStamps
       responses:
+        "200":
+          description: Stamps retrieved.
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/StampDto"
         "401":
           description: Unauthorized
           content:
@@ -190,14 +198,6 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-        "200":
-          description: Stamps retrieved.
-          content:
-            '*/*':
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/StampDto"
         "500":
           description: Server error.
           content:
@@ -218,6 +218,12 @@ paths:
         schema:
           type: string
       responses:
+        "200":
+          description: Stamp found.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/StampDto"
         "401":
           description: Unauthorized
           content:
@@ -230,12 +236,6 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-        "200":
-          description: Stamp found.
-          content:
-            '*/*':
-              schema:
-                $ref: "#/components/schemas/StampDto"
         "404":
           description: Stamp not found.
           content:
@@ -257,6 +257,12 @@ paths:
         first call if one does not yet exist.
       operationId: getProfile
       responses:
+        "200":
+          description: User profile retrieved.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/UserDto"
         "401":
           description: Missing or invalid JWT token.
           content:
@@ -269,12 +275,6 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-        "200":
-          description: User profile retrieved.
-          content:
-            '*/*':
-              schema:
-                $ref: "#/components/schemas/UserDto"
         "500":
           description: Server error.
           content:
@@ -291,6 +291,14 @@ paths:
       description: Retrieve all first day covers.
       operationId: getAllFirstDayCovers
       responses:
+        "200":
+          description: First day covers retrieved.
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/FirstDayCoverDto"
         "401":
           description: Unauthorized
           content:
@@ -303,14 +311,6 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-        "200":
-          description: First day covers retrieved.
-          content:
-            '*/*':
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/FirstDayCoverDto"
         "500":
           description: Server error.
           content:
@@ -331,6 +331,12 @@ paths:
         schema:
           type: string
       responses:
+        "200":
+          description: First day cover found.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/FirstDayCoverDto"
         "401":
           description: Unauthorized
           content:
@@ -343,12 +349,6 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-        "200":
-          description: First day cover found.
-          content:
-            '*/*':
-              schema:
-                $ref: "#/components/schemas/FirstDayCoverDto"
         "404":
           description: First day cover not found.
           content:
@@ -369,6 +369,14 @@ paths:
       description: Retrieve all designers.
       operationId: getAllDesigners
       responses:
+        "200":
+          description: Designers retrieved.
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DesignerDto"
         "401":
           description: Unauthorized
           content:
@@ -381,14 +389,6 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-        "200":
-          description: Designers retrieved.
-          content:
-            '*/*':
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/DesignerDto"
         "500":
           description: Server error.
           content:
@@ -409,6 +409,12 @@ paths:
         schema:
           type: string
       responses:
+        "200":
+          description: Designer found.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/DesignerDto"
         "401":
           description: Unauthorized
           content:
@@ -421,12 +427,6 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-        "200":
-          description: Designer found.
-          content:
-            '*/*':
-              schema:
-                $ref: "#/components/schemas/DesignerDto"
         "404":
           description: Designer not found.
           content:
