@@ -11,7 +11,7 @@ This is the single canonical post-MVP delivery plan. It covers the engineering f
 - **Known state:**
   - **[RESOLVED]** DTOs are flattened for UI consumption; backend/frontend payload shape alignment is critical. `StampMapper` converts nested MongoDB structures (`denomination` object → string, `designerIds` array → resolved comma-joined name string, `themes` array → comma-joined string). The full pipeline is now automated: `StampMapper` → `openapi.yaml` (via `OpenApiSpecTest`) → `api.generated.ts` + `schemas.generated.ts` (via `npm run generate`) → TypeScript types (via `z.infer<>`). A change to any mapper output field automatically propagates to frontend types on next `generate` run.
   - **[RESOLVED]** Zod schemas added for runtime validation; OpenAPI contract validation added — `openapi.yaml` is generated from controller annotations by `OpenApiSpecTest`, CI fails on drift.
-  - Frontend uses local `useEffect` + `fetch` + `AbortController`; minimal shared state in `App.tsx`.
+  - **[SOLUTION]** Frontend uses local `useEffect` + `fetch` + `AbortController`; minimal shared state in `App.tsx`.
   - **[RESOLVED]** Browser-side `mongoose` schema files removed; plain TypeScript interfaces used instead.
   - **[RESOLVED]** Backend tests exist; frontend test coverage is absent.
   - **[RESOLVED]** Docker Compose added (MongoDB + Keycloak). 
@@ -37,19 +37,19 @@ Engineering foundations needed before protected user features and AI integration
 - Add a MongoDB migration tool (`Mongock`) before user-domain and write-flow document structures start changing.
 
 ### 2. Frontend modernization
-- Keep functional components as the standard UI model.
+- **[SOLUTION]** Keep functional components as the standard UI model.
 - **[RESOLVED]** **Remove browser-side `mongoose` usage** from `src/features/product/schema/*` immediately — this is architecturally wrong in a browser bundle.
   - **[RESOLVED]** Replace with plain TypeScript interfaces where only typing is needed.
   - **[RESOLVED]** Replace with Zod/Yup schemas where runtime validation is needed.
 - **[RESOLVED]** Introduce **Redux Toolkit** for cross-page shared state only:
   - **[RESOLVED]** auth/session, current user profile, collection / wishlist / favorites, AI chat session and recommendation results, async request status for protected features.
-- Keep local component state in `useState`.
+- **[SOLUTION]** Keep local component state in `useState`.
 - **[RESOLVED]** Use **Redux thunks** for business-level async API calls: session bootstrap, profile load, collection updates, AI requests, protected route data.
 - Adopt **Formik + Yup** for operationally important forms: profile settings, collection item metadata, admin enrichment forms.
 - **[RESOLVED]** Continue with **React Router** — add clear route groups: public routes, authenticated routes, admin routes.
 - **[RESOLVED]** Replace raw `<a href>` navigation in `Header.tsx` with `Link` / `NavLink` from `react-router-dom` to avoid full page reloads.
 - **[RESOLVED]** Fix self-referencing links in `CollectionPage.tsx` and `FirstDayPage.tsx` (currently both point to the same page they are on).
-- Continue with **Tailwind CSS** — build a shared branding layer from the Ukrposhta stamp palette using Tailwind theme tokens and reusable components.
+- **[SOLUTION]** Continue with **Tailwind CSS** — build a shared branding layer from the Ukrposhta stamp palette using Tailwind theme tokens and reusable components.
 - **[RESOLVED]** Evolve frontend folder structure toward:
   ```
   src/app/store.ts
@@ -99,7 +99,7 @@ Functional expansion centered on user identity, authorization, and protected fea
 
 ### 1. User domain model
 Define user-owned business entities explicitly before adding security broadly:
-- **[RESOLVED]** user profile
+- user profile
 - owned stamps / collection items
 - wishlist
 - favorites
@@ -151,7 +151,7 @@ Define user-owned business entities explicitly before adding security broadly:
   - **[RESOLVED]** CORS: allow only known frontend origins; keep allowed origins environment-driven.
   - **[RESOLVED]** For direct bearer-token APIs: stateless resource-server mode (no sessions, CSRF disabled).
   - For the later BFF model with Secure HttpOnly cookies: re-evaluate CSRF protection and cookie policies carefully.
-  - Enforce TLS in production.
+  - **[SOLUTION]** Enforce TLS in production.
 
 ### 7. Public catalog improvements (parallel track)
 - Better search and filtering on public catalog endpoints with URL-friendly filter/sort state.
