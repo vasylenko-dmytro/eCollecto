@@ -2,6 +2,7 @@ package com.vasylenko.ecollectobackend.stamp;
 
 import com.vasylenko.ecollectobackend.dto.ErrorResponse;
 import com.vasylenko.ecollectobackend.dto.StampDto;
+import com.vasylenko.ecollectobackend.dto.YearSummaryDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -31,22 +32,43 @@ public class StampController {
 
     /**
      * GET /api/stamps
-     * Retrieves a list of all available stamps.
+     * Retrieves a list of all available stamps, optionally filtered by year.
      *
+     * @param year Optional release year filter.
      * @return A {@link ResponseEntity} containing a {@link List} of {@link StampDto} objects.
-     * Returns an empty list with a 200 OK status if no stamps are found in the system.
      */
     @GetMapping("/stamps")
-    @Operation(summary = "List stamps", description = "Retrieve all stamps.")
+    @Operation(summary = "List stamps", description = "Retrieve all stamps, optionally filtered by year.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Stamps retrieved.",
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = StampDto.class)))),
             @ApiResponse(responseCode = "500", description = "Server error.",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<List<StampDto>> getAllStamps() {
-        List<StampDto> stamps = stampService.findAll();
+    public ResponseEntity<List<StampDto>> getAllStamps(
+            @RequestParam(required = false) Integer year) {
+        List<StampDto> stamps = (year != null)
+                ? stampService.findByYear(year)
+                : stampService.findAll();
         return ResponseEntity.ok(stamps);
+    }
+
+    /**
+     * GET /api/stamps/years
+     * Retrieves distinct release years with stamp counts.
+     *
+     * @return A {@link ResponseEntity} containing a {@link List} of {@link YearSummaryDto} objects.
+     */
+    @GetMapping("/stamps/years")
+    @Operation(summary = "List stamp years", description = "Retrieve distinct release years with stamp counts, sorted descending.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Years retrieved.",
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = YearSummaryDto.class)))),
+            @ApiResponse(responseCode = "500", description = "Server error.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    public ResponseEntity<List<YearSummaryDto>> getStampYears() {
+        return ResponseEntity.ok(stampService.findDistinctYears());
     }
 
     /**

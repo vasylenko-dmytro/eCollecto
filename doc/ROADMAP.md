@@ -15,7 +15,7 @@ This is the single canonical post-MVP delivery plan. It covers the engineering f
   - **[RESOLVED]** Browser-side `mongoose` schema files removed; plain TypeScript interfaces used instead.
   - **[RESOLVED]** Backend tests exist; frontend test coverage is absent.
   - **[RESOLVED]** Docker Compose added (MongoDB + Keycloak). 
-  - **[RESOLVED]** CI added (GitHub Actions). No Mongock migrations yet. 
+  - **[RESOLVED]** CI added (GitHub Actions). No dedicated DB migration tool yet (using ApplicationRunner instead — see Track 1 §1).
   - **[RESOLVED]** Redux Toolkit introduced. 
   - **[RESOLVED]** Keycloak integration complete.
 
@@ -34,7 +34,17 @@ Engineering foundations needed before protected user features and AI integration
 - **[RESOLVED]** Provide a seeded Keycloak realm/client import (`keycloak/realm-export.json`) for `ecollecto`, including `ecollecto-ui` and `ecollecto-backend` clients.
 - **[RESOLVED]** Add bootstrap docs so a new engineer can bring up dependencies without manual installation.
 - **[RESOLVED]** Keep Spring and frontend config environment-driven so local, CI, and Docker environments share the same wiring.
-- Add a MongoDB migration tool (`Mongock`) before user-domain and write-flow document structures start changing.
+- Add **data seeding and index initialization via `ApplicationRunner`** before user-domain and write-flow document structures start changing. Flamingock (the Mongock successor) is still in beta (`0.0.x`) and has no stable Spring Boot 4 support; Mongock 5.x likewise has no official Spring Boot 4 release. Pure Spring `ApplicationRunner` is the zero-dependency, guaranteed-compatible choice for this project stack.
+  - Create `src/main/java/com/vasylenko/ecollectobackend/config/DataInitializer.java` — a `@Component` implementing `ApplicationRunner`, guarded by `@ConditionalOnProperty(name = "app.data.init.enabled", havingValue = "true")`.
+  - **Seed run** (`V001`): load `collection/ua/designers.json` and `collection/ua/stamp.json` from classpath (`src/main/resources/migration-data/ua/`); use `MongoTemplate` upsert-by-`_id` so the operation is idempotent and safe to re-run.
+  - **Index run** (`V002`): declare unique compound index `{ userId, stampId }` on `user_collections`, `user_wishlists`, `user_favorites` via `MongoTemplate.indexOps(...).ensureIndex(...)` — idempotent by design (`ensureIndex` is a no-op if the index already exists).
+  - Enable with `app.data.init.enabled=true` in `application-seed.properties` or via environment variable `APP_DATA_INIT_ENABLED=true`; stays `false` in the default `application.properties` and in `src/test/resources/application.properties`.
+  - Must run (seed profile active) before any `CollectionItemDocument`, `WishlistItemDocument`, or `FavoriteDocument` write operations reach production. Re-evaluate migration to a dedicated tool (Flyway-Mongo fork or stable Flamingock GA) once Spring Boot 4 support is confirmed.
+- Add a **Dockerfile for the Spring Boot backend** (`backend/ecollecto-backend/Dockerfile`) — currently `docker-compose.yml` only starts MongoDB and Keycloak, not the app itself.
+  - Use Eclipse Temurin 25 JRE slim base image.
+  - Stage 1: Gradle build → extract layers with `layertools jar`.
+  - Stage 2: minimal runtime image copying extracted layers for fast rebuilds.
+  - Update `docker-compose.yml` with a commented-out `ecollecto-backend` service block so it is ready for staging/production without changing the dev workflow.
 
 ### 2. Frontend modernization
 - **[SOLUTION]** Keep functional components as the standard UI model.
@@ -73,6 +83,8 @@ Engineering foundations needed before protected user features and AI integration
 - **[RESOLVED]** CodeQL running in CI.
 - **[RESOLVED]** Add frontend testing: **Vitest + React Testing Library**.
   - **[RESOLVED]** Cover: route behaviour, error states, loading states, search filtering, tariff denomination formatting, and Zod schema validation (positive and negative scenarios). 108 tests across 11 suites in `src/__tests__/`.
+- Add **explicit OpenAPI diff-check step** in CI (Architecture Review §2.6): after running `OpenApiSpecTest`, compare the regenerated `openapi.yaml` to the committed copy using `git diff --exit-code backend/ecollecto-backend/openapi.yaml`. CI must fail if the files diverge — this makes the "fail if stale" guarantee deterministic rather than relying on developer discipline.
+- Add **E2E test suite (Playwright)** covering the full auth flow — login via Keycloak redirect, protected route access, logout. Unit/integration tests cannot cover OIDC redirect logic. Target: at minimum one smoke test that exercises the Auth Code + PKCE flow against a Testcontainers-managed Keycloak instance in CI.
 
 ### 4. Contract governance and backend consistency
 - **[RESOLVED]** Preserve the global error model `{ message, code, status }`. `ErrorResponse.java` defines the shape; `GlobalExceptionHandler` centralises all app-level exceptions (404, 400, 403, 401, 500). JWT filter-chain 401/403 are now also handled: `SecurityConfig` configures `authenticationEntryPoint` and `accessDeniedHandler` on the `oauth2ResourceServer` so Spring Security filter-level auth failures use the same `ErrorResponse` JSON, bypassing the default `WWW-Authenticate` header response.
@@ -155,8 +167,27 @@ Define user-owned business entities explicitly before adding security broadly:
 
 ### 7. Public catalog improvements (parallel track)
 - Better search and filtering on public catalog endpoints with URL-friendly filter/sort state.
+- Add **offset-based pagination** (`?page=0&size=40`) to `GET /api/stamps` and `GET /api/stamps?year={year}` using Spring Data's `Pageable` — backend response shape: `{ content: StampDto[], totalPages, totalElements, page, size }`. This is required before `YearStampsPage` ships (Architecture Review §2.4). Frontend pagination is described in `UI_ROADMAP.md` Block H.
 - Visual indicators on catalog items showing whether an authenticated user already owns or wishlisted an item.
 - Extend read-only catalog endpoints carefully without breaking existing DTO shape contracts.
+
+### 8. Backend hygiene (Architecture Review recommendations)
+
+> Items from the architectural analysis (2026-05-28) that are not yet tracked elsewhere.
+
+- **Mock JWT test profile (§2.3):** Add a Spring Boot `test` / `local` profile with mock JWT support so integration tests run without a live Keycloak container.
+  - Add `spring-security-test` is already in `build.gradle` — use `@WithMockJwt` or configure `spring.security.oauth2.resourceserver.jwt.jwk-set-uri=` with a WireMock stub in `application-test.properties`.
+  - Goal: backend `@SpringBootTest` integration tests must pass in CI without Docker. Use **Testcontainers** (`org.testcontainers:mongodb` + `com.github.dasniko:testcontainers-keycloak`) for the Keycloak container in tests that genuinely need a real token to be issued.
+  - Add both `testcontainers-bom` and `testcontainers-keycloak` to `gradle/libs.versions.toml`.
+- **CORS env-driven fix (§2.2 / ROADMAP Track 2 §6):** `SecurityConfig.java` currently hardcodes `http://localhost:5173` and `http://localhost:4173`. Despite `ROADMAP.md` marking CORS as resolved, the actual code does not read from `application.properties`. Fix:
+  - Add `app.cors.allowed-origins=http://localhost:5173,http://localhost:4173` to `src/main/resources/application.properties`.
+  - Bind via `@Value("${app.cors.allowed-origins}") List<String> allowedOrigins` in `SecurityConfig`.
+  - Override with environment variable `APP_CORS_ALLOWED_ORIGINS` in Docker/production.
+- **DTO package reorganisation (§2.2):** The central `dto/` package (`DesignerDto`, `StampDto`, `FirstDayCoverDto`, `TariffsDto`) contradicts the vertical-slice pattern of the rest of the backend. Defer until after Block B ships; then move each DTO into its owning feature package (`stamp/dto/StampDto.java`, etc.). `ErrorResponse` stays in `common/`. This touches `openapi.yaml` schema names and requires a full `npm run generate` regeneration cycle plus test update pass.
+- **API versioning decision (§2.5):** All endpoints currently use `/api/` with no version prefix. Decide explicitly before Block B endpoints are named and the OpenAPI spec is published externally:
+  - **Option A (recommended for now):** Freeze no-version path; document the decision in `doc/API.md` as an intentional choice. Add a `Deprecation` and `Sunset` header strategy for future breaking changes.
+  - **Option B:** Introduce `/api/v1/` now; update `SecurityConfig` matchers, `openapi.yaml` servers block, frontend `vite.config.ts` proxy, and all `apiFetch` calls in one atomic PR.
+  - Decision must be recorded in `doc/API.md` before Block B is merged.
 
 ---
 
@@ -233,3 +264,23 @@ Do **not** rewrite the UI. Work incrementally:
 - Introduce Redux Toolkit only for cross-page authenticated state.
 - Add vulnerability checks and Sonar analysis early.
 - Add AI features only after user identity and protected data models are stable.
+
+---
+
+## Open items tracker (2026-05-28)
+
+Consolidated list of concrete next actions, ordered by dependency and impact.
+
+| Priority | Item | Track | Notes |
+|----------|------|-------|-------|
+| 🔴 Critical | Add `DataInitializer` (ApplicationRunner): seed `ua/` data + create compound indexes | Track 1 §1 | Must run before Block B writes any user documents; Flamingock/Mongock have no stable Spring Boot 4 support |
+| 🔴 Critical | Explicit OpenAPI diff-check in CI git step | Track 1 §3 | Deterministic stale-spec protection |
+| 🔴 Critical | Decide API versioning strategy, document in `API.md` | Track 2 §8 | Blocker before Block B endpoints are published |
+| 🟡 High | Mock JWT test profile / Testcontainers for Keycloak | Track 2 §8 | Integration tests must not require live Docker stack |
+| 🟡 High | Fix CORS to read from `application.properties` | Track 2 §8 | Currently hardcoded despite ROADMAP saying resolved |
+| 🟡 High | Offset pagination on `GET /api/stamps` and `GET /api/stamps?year=` | Track 2 §7 | Needed before YearStampsPage ships |
+| 🟡 High | Add Dockerfile for `ecollecto-backend` | Track 1 §1 | Required for staging/production deployment |
+| 🟠 Medium | Add Playwright E2E suite covering auth flow | Track 1 §3 | Auth Code + PKCE flow cannot be unit tested |
+| 🟠 Medium | Move DTOs into feature packages (after Block B) | Track 2 §8 | Maintain vertical-slice consistency; requires generate cycle |
+| 🟢 Low | Add Testcontainers MongoDB to existing integration tests | Track 2 §8 | Improves test isolation; deterministic state |
+

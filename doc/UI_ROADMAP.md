@@ -4,6 +4,13 @@ This document is the single canonical plan for frontend page expansion and UX im
 It covers catalog restructuring, user-facing protected pages, and UI polish.
 All guidance from `ecollecto_uxui_improvement_guide.md` has been merged here — that file has been deleted.
 
+> **Sync note (2026-05-28):** Sections corrected against actual code state. Gaps discovered:
+> - `ProductCard.tsx` still has border-t row dividers, a dead `<a href="#">` overlay anchor, and a dead `<a href="#">` "Details" button — should all use React Router `<Link>`.
+> - `Header.tsx` line 43 still has `alt="sCollecto"` (F3 not done).
+> - `Footer.tsx` line 9 brand text is still `sCollecto`; brand `<a href="/">` should be `<Link to="/">` (F3 + F4 partially not done).
+> - `Footer.tsx` Subscribe button is an `<a href="#">` — should be a `<button>` inside a unified-height wrapper (F4 not done).
+> - All Block B–E items — not yet started.
+
 ---
 
 ## Block A — Year-Based Catalog Navigation
@@ -62,8 +69,10 @@ Structure from UX Guide §6:
 
 - Reads `:year` from URL params.
 - Fetches `GET /api/stamps?year=:year` on mount using `useEffect` + `AbortController` (existing pattern).
+- Uses typed wrapper `fetchStampsByYear(year)` from `src/shared/api/stampsApi.ts` (see Block G1).
 - Renders `ProductCard` grid with back-link `← Back to Catalog`.
 - Local `useState` for loading / error / data — no Redux (public read-only data).
+- Integrates Block H pagination controls if the year has more than one page of results.
 
 ### A6 · Frontend — Routing + UX fixes
 
@@ -73,17 +82,20 @@ Structure from UX Guide §6:
 - Add `/stamps` → `CatalogPage`.
 - Add `/stamps/year/:year` → `YearStampsPage`.
 - Keep `/stamps/:id` → `ProductPage` (no change — existing route still matched after more-specific `/stamps/year/:year`).
+- Thread `searchTerm` prop into `CatalogPage` and `YearStampsPage` (currently only `HomePage`, `CollectionPage`, `FirstDayPage` receive it).
 
 **File:** `src/features/product/components/ProductCard.tsx` (UX Guide §2)
 
-- Remove `<hr />` dividers between metadata fields.
+> ⚠️ **Outstanding (actual code audit):** All three items below not yet applied.
+
+- Remove `border-t` row dividers between metadata fields (lines 52, 66, 80 — currently replicate the `<hr />` effect with `border-t border-gray-300 dark:border-neutral-900`).
 - Apply typography hierarchy: labels → `text-gray-400`, values → `text-white font-medium`.
-- Make card a flex column with `mt-auto` on the "Details" button wrapper so all buttons align at the bottom.
+- Make card a flex column with `mt-auto` on the "Details" button wrapper so all buttons align at the bottom (wrapper exists but the "Details" `<a>` must become a proper `<Link to={...}>` — the dead `<a href="#">` overlay on line 45 and "Details" anchor on line 98 both need replacing with Router-aware links; the parent `<Link>` in `HomePage.tsx` wraps the whole card so the overlay anchor should simply be removed).
 
 **File:** `src/shared/layout/Header.tsx` (UX Guide §5)
 
-- Replace plain `<a>` tags with `<NavLink>` using active style (yellow accent or bottom border).
-- Unified brand name: use **eCollecto** throughout (fix *sCollecto* logo text).
+- Replace plain `<a>` tags with `<NavLink>` using active style (yellow accent or bottom border). *(NavLink already present for nav items — add active class logic.)*
+- Fix `alt="sCollecto"` on line 43 → `alt="eCollecto"`. *(F3 — outstanding.)*
 
 ---
 
@@ -191,9 +203,11 @@ Thunks: `fetchFavorites`, `addToFavorites(stampId)`, `removeFromFavorites(stampI
 
 ### C4 · Bootstrap on login
 
-**File:** `src/app/providers/AuthProvider.tsx` (or wherever `loadUserProfile` is dispatched)
+**File:** `src/app/providers/AuthProvider.tsx`
 
-After a successful auth session, also dispatch `fetchCollection`, `fetchWishlist`, `fetchFavorites` so the icon states on catalog cards are correct from the first render.
+> ⚠️ **Hard blocker for Block E icon states:** `AuthProvider.tsx` currently dispatches only `setUser` + `loadUserProfile` after auth. Must also dispatch `fetchCollection`, `fetchWishlist`, `fetchFavorites` so icon states on catalog cards are correct from the first render. C1–C3 slices must exist before this step.
+
+After a successful auth session, also dispatch `fetchCollection`, `fetchWishlist`, `fetchFavorites`.
 
 ---
 
@@ -285,16 +299,15 @@ Add corresponding `NavLink` entries to `Header.tsx` for authenticated users (ava
 
 ## Block F — Remaining UX Polish
 
-These items come from the original UX guide and were not covered in Blocks A–E.
-They are self-contained visual fixes with no backend or Redux dependencies.
+These items come from the original UX guide. They have no backend or Redux dependencies.
 
 ### F1 · Stamp image — drop-shadow & contrast (`ProductCard.tsx`, `StampContainer.tsx`)
 
 **Issue (UX Guide §2):** Solid light-gray square behind the stamp image looks flat.
 
-- Apply `filter: drop-shadow(0 2px 6px rgba(0,0,0,0.35))` to the `<img>` element so the stamp artwork has a physical, paper-like quality.
+- Apply `filter: drop-shadow(0 2px 6px rgba(0,0,0,0.35))` to the `<img>` element.
 - Tailwind utility: `drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)]` on the image tag.
-- Darken the inner image container slightly relative to the outer card background for additional depth:
+- Darken the inner image container slightly relative to the outer card background:
   ```tsx
   // inner wrapper
   className="bg-neutral-800 rounded p-2"
@@ -307,8 +320,8 @@ They are self-contained visual fixes with no backend or Redux dependencies.
 
 **Issue (UX Guide §3):** Large empty space to the right of the metadata table; issue titles share the same visual scale as data labels.
 
-- **Heading:** increase issue title font size to `text-xl font-bold` (currently blends with label text).
-- **Layout:** replace single-column metadata table with a two-column grid directly below the title block:
+- **Heading:** increase issue title font size to `text-xl font-bold`.
+- **Layout:** replace single-column metadata table with a two-column grid:
   ```tsx
   <div className="grid grid-cols-2 gap-x-8 gap-y-2 mt-4">
     <span className="text-gray-400">Date</span>      <span>22 January 2018</span>
@@ -317,29 +330,132 @@ They are self-contained visual fixes with no backend or Redux dependencies.
     ...
   </div>
   ```
-- Alternatively, use a compact horizontal card layout if the component supports it — e.g. image (left 1/3) + metadata grid (right 2/3) inside a single `flex` row.
 
-### F3 · Brand name — sCollecto → eCollecto (`Header.tsx`, logo SVG/text)
+### F3 · Brand name — sCollecto → eCollecto
 
-**Issue (UX Guide §1):** Logo text reads *sCollecto* but all documentation, routes, and Keycloak realm use *eCollecto*.
+> ⚠️ **Outstanding — two locations, neither fixed:**
 
-- Locate the logo text node inside `Header.tsx` (or the referenced SVG/image asset).
-- Replace `sCollecto` with `eCollecto` everywhere in the component.
-- If the logo is an SVG file under `src/assets/`, update the text element there too.
-- Single-line fix — recommended to bundle with the first PR that touches `Header.tsx`.
+**File:** `src/shared/layout/Header.tsx` line 43
+```tsx
+// Before
+<img src={brandIcon} alt="sCollecto" className="h-8 w-auto"/>
+// After
+<img src={brandIcon} alt="eCollecto" className="h-8 w-auto"/>
+```
 
-### F4 · Footer — Subscribe input alignment (`Footer.tsx`)
+**File:** `src/shared/layout/Footer.tsx` line 9
+```tsx
+// Before
+<a className="..." href="/" aria-label="Brand">sCollecto</a>
+// After — use Link, fix brand name
+<Link className="..." to="/" aria-label="Brand">eCollecto</Link>
+```
+> Also add `import { Link } from 'react-router-dom';` to `Footer.tsx`.
 
-**Issue (UX Guide §5):** Email input and "Subscribe" button have mismatched heights.
+### F4 · Footer — Subscribe input alignment + button fix (`Footer.tsx`)
 
-- Set both elements to the same explicit height: `h-10` or `h-12`.
-- Embed the button visually inside the input's right edge using a wrapper:
+> ⚠️ **Outstanding — Subscribe button is `<a href="#">`, not a `<button>`, and heights are mismatched.**
+
+- Set both elements to the same explicit height using a unified wrapper:
   ```tsx
   <div className="flex h-10 rounded overflow-hidden border border-gray-600">
     <input className="flex-1 px-3 bg-neutral-800 text-white outline-none" placeholder="Enter your email" />
-    <button className="px-4 bg-yellow-400 text-black font-medium hover:bg-yellow-300">Subscribe</button>
+    <button type="button" className="px-4 bg-yellow-400 text-black font-medium hover:bg-yellow-300">
+      Subscribe
+    </button>
   </div>
   ```
+
+---
+
+## Block G — Frontend API Layer (Typed Wrappers)
+
+**Source:** Architecture Review §2.1 — "copy-paste data fetching" in every page component.
+
+**Goal:** Centralise all endpoint calls into typed functions in `src/shared/api/`.
+Pages keep their `useState` + `useEffect` + `AbortController` pattern (no new dependency),
+but they call a named function instead of an inline `fetch('/api/...')`.
+
+### G1 · `src/shared/api/stampsApi.ts`
+
+```typescript
+import { apiFetch } from './apiClient';
+import type { components } from '../features/product/types/api.generated';
+
+type StampDto   = components['schemas']['StampDto'];
+type YearEntry  = { year: number; count: number };
+
+export const fetchStamps          = ()          => apiFetch<StampDto[]>('/api/stamps');
+export const fetchStampsByYear    = (year: number) => apiFetch<StampDto[]>(`/api/stamps?year=${year}`);
+export const fetchStampById       = (id: string)   => apiFetch<StampDto>(`/api/stamp/${id}`);
+export const fetchStampYears      = ()          => apiFetch<YearEntry[]>('/api/stamps/years');
+```
+
+### G2 · `src/shared/api/catalogApi.ts`
+
+Covers designers, first-day-covers, tariffs:
+
+```typescript
+export const fetchDesigners     = () => apiFetch<DesignerDto[]>('/api/designers');
+export const fetchFirstDayCovers = () => apiFetch<FirstDayCoverDto[]>('/api/first-day-covers');
+export const fetchTariffs        = () => apiFetch<TariffsDto>('/api/tariffs');
+```
+
+### G3 · `src/shared/api/userApi.ts`
+
+Covers protected `/api/me/*` endpoints:
+
+```typescript
+export const fetchUserProfile    = ()              => apiFetch<UserDto>('/api/me');
+export const fetchCollection     = ()              => apiFetch<CollectionItemDto[]>('/api/me/collection');
+export const addToCollection     = (stampId: string) => apiFetch<void>('/api/me/collection/items', { method: 'POST', body: JSON.stringify({ stampId }) });
+export const removeFromCollection = (stampId: string) => apiFetch<void>(`/api/me/collection/items/${stampId}`, { method: 'DELETE' });
+// … same pattern for wishlist and favorites
+```
+
+### G4 · Migration guidance
+
+- Replace inline `fetch('/api/stamps')` calls in `HomePage.tsx`, `CollectionPage.tsx`, `FirstDayPage.tsx`, `ProductPage.tsx` with the new typed wrappers.
+- New pages (`CatalogPage`, `YearStampsPage`, `LandingPage`) must use wrappers from day one — do not introduce new inline fetch calls.
+- Redux thunks (Block C) must also use `userApi.ts` rather than calling `apiFetch` directly.
+
+---
+
+## Block H — Frontend Pagination
+
+**Source:** Architecture Review §2.4 — no pagination strategy defined; loading all ~2500 stamps in one request will degrade UX and performance.
+
+**Recommended approach:** offset-based (`?page=0&size=40`) aligned with Spring Data's `Pageable` support on the backend (see `ROADMAP.md` Track 2 §7 for backend side).
+
+### H1 · `PaginationControls` component
+
+**New file:** `src/shared/ui/PaginationControls.tsx`
+
+```tsx
+interface PaginationControlsProps {
+  page: number;
+  totalPages: number;
+  onPrev: () => void;
+  onNext: () => void;
+}
+```
+
+- ← Prev / Next → buttons, disabled at boundaries.
+- "Page X of Y" label.
+- Accessible `aria-label` on buttons.
+
+### H2 · Integration points
+
+| Page | Where pagination applies |
+|------|---------------------------|
+| `YearStampsPage` | Years with >40 stamps (rare but guard against it) |
+| `CatalogPage` (if expanded to stamp list view) | If year grid ever shows full stamp list |
+| `MyCollectionPage` | Large collections paginated locally or server-side |
+
+### H3 · URL state
+
+- Persist page number in URL query param (`?page=1`) so browser back/forward works correctly.
+- Use `useSearchParams` from `react-router-dom`.
 
 ---
 
@@ -364,42 +480,45 @@ They are self-contained visual fixes with no backend or Redux dependencies.
 
 ## UX Guide Checklist
 
-All items from the original `ecollecto_uxui_improvement_guide.md` — now fully incorporated:
-
-| § | Issue | Where fixed |
-|---|-------|-------------|
-| §1 | Brand name *sCollecto* → *eCollecto* in logo | `Header.tsx` (Block F3) |
-| §2 | Card `<hr />` dividers between metadata fields | `ProductCard.tsx` (Block A6) |
-| §2 | Misaligned "Details" button (variable card heights) | `ProductCard.tsx` flex + `mt-auto` (Block A6) |
-| §2 | Flat gray image background, no depth | `ProductCard.tsx`, `StampContainer.tsx` drop-shadow (Block F1) |
-| §3 | First Day page — large empty space, unbalanced layout | `FirstDayCollection.tsx` two-column grid (Block F2) |
-| §3 | First Day page — title same scale as labels | `FirstDayCollection.tsx` `text-xl font-bold` (Block F2) |
-| §4 | No progress context in collection | `MyCollectionPage` progress bar (Block D2) |
-| §4 | No filters (All / Collected / Missing) | `MyCollectionPage` filter tabs (Block D2) |
-| §4 | No hover states on grayscale stamps | `MyCollectionPage` `group-hover` overlays (Block D2) |
-| §4 | Empty state for new users | `EmptyState` component (Block D2) |
-| §5 | No active NavLink highlight | `Header.tsx` `NavLink` active style (Block A6) |
-| §5 | Footer input/button height mismatch | `Footer.tsx` unified height wrapper (Block F4) |
-| §6 | No landing / welcome page | `LandingPage` (Block A3) |
-
+| § | Issue | Where fixed | Status |
+|---|-------|-------------|--------|
+| §1 | Brand name *sCollecto* → *eCollecto* in logo | `Header.tsx` alt + `Footer.tsx` brand text (F3) | ⏳ Outstanding |
+| §2 | Card `border-t` dividers between metadata fields | `ProductCard.tsx` — remove row borders (A6) | ⏳ Outstanding |
+| §2 | Dead `<a href="#">` overlay and "Details" anchor | `ProductCard.tsx` — replace with `<Link>` (A6) | ⏳ Outstanding |
+| §2 | Misaligned "Details" button (variable card heights) | `ProductCard.tsx` flex + `mt-auto` (A6) | ⏳ Outstanding |
+| §2 | Flat gray image background, no depth | `ProductCard.tsx`, `StampContainer.tsx` drop-shadow (F1) | ⏳ Outstanding |
+| §3 | First Day page — large empty space, unbalanced layout | `FirstDayCollection.tsx` two-column grid (F2) | ⏳ Outstanding |
+| §3 | First Day page — title same scale as labels | `FirstDayCollection.tsx` `text-xl font-bold` (F2) | ⏳ Outstanding |
+| §4 | No progress context in collection | `MyCollectionPage` progress bar (D2) | ⏳ Block D |
+| §4 | No filters (All / Collected / Missing) | `MyCollectionPage` filter tabs (D2) | ⏳ Block D |
+| §4 | No hover states on grayscale stamps | `MyCollectionPage` `group-hover` overlays (D2) | ⏳ Block D |
+| §4 | Empty state for new users | `EmptyState` component (D2) | ⏳ Block D |
+| §5 | No active NavLink highlight | `Header.tsx` `NavLink` active style (A6) | ⏳ Outstanding |
+| §5 | Footer input/button height mismatch + wrong element type | `Footer.tsx` unified height wrapper + `<button>` (F4) | ⏳ Outstanding |
+| §5 | Footer brand link not a React Router `<Link>` | `Footer.tsx` (F3) | ⏳ Outstanding |
+| §6 | No landing / welcome page | `LandingPage` (A3) | ⏳ Block A |
+| — | Inline fetch boilerplate in every page | Typed API wrappers in `shared/api/` (G1–G4) | ⏳ Block G |
+| — | No pagination — loads all ~2500 stamps | `PaginationControls` + URL state (H1–H3) | ⏳ Block H |
 
 ---
 
 ## Delivery Order
 
 ```
-A1 → A2 (backend contract)
-A3 → A4 → A5 → A6 (frontend catalog pages)
-B1 → B2 → B3 → B4 (backend user slices + contract)
-C1 → C2 → C3 → C4 (frontend Redux slices)
-D1 → D2 → D3 → D4 (protected pages)
-E1 → E2 → E3 (catalog action icons + routing)
-F1 → F2 → F3 → F4 (standalone UX polish — no dependencies, can be bundled with any PR above)
+G1 → G2 → G3           (typed API layer — no UI changes, unblocks everything)
+A1 → A2                 (backend contract for year endpoints)
+A3 → A4 → A5 → A6      (frontend catalog pages, use typed wrappers from G)
+H1 → H2 → H3           (pagination, integrate into YearStampsPage from A5)
+B1 → B2 → B3 → B4      (backend user slices + contract)
+C1 → C2 → C3 → C4      (frontend Redux slices; C4 requires C1–C3 done first)
+D1 → D2 → D3 → D4      (protected pages)
+E1 → E2 → E3           (catalog action icons + routing)
+F1 → F2 → F3 → F4      (standalone UX polish — no dependencies, bundle with any PR above)
 ```
 
+Block G has no external dependencies — do it first.
 Blocks A and B can be worked on in parallel (frontend / backend split).
-Block C depends on B4 (generated types).
-Block D depends on C.
-Block E depends on C (icon state reads Redux).
+Block C depends on B4 (generated types) and must complete before D and E.
+Block H (pagination) backend side must land alongside or before A1.
 Block F has no dependencies — each step is an isolated visual fix.
 

@@ -50,6 +50,9 @@ const StampDto = z
     stampSKU: z.number().int(),
   })
   .passthrough();
+const YearSummaryDto = z
+  .object({ year: z.number().int(), count: z.number().int() })
+  .passthrough();
 const UserDto = z
   .object({ id: z.string(), email: z.string(), name: z.string() })
   .partial()
@@ -91,6 +94,7 @@ export const schemas = {
   StampRelease,
   StampImages,
   StampDto,
+  YearSummaryDto,
   UserDto,
   FirstDayCoverRelease,
   FirstDayCoverImages,

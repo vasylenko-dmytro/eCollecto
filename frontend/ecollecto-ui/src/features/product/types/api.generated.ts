@@ -73,9 +73,29 @@ export interface paths {
         };
         /**
          * List stamps
-         * @description Retrieve all stamps.
+         * @description Retrieve all stamps, optionally filtered by year.
          */
         get: operations["getAllStamps"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/stamps/years": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List stamp years
+         * @description Retrieve distinct release years with stamp counts, sorted descending.
+         */
+        get: operations["getStampYears"];
         put?: never;
         post?: never;
         delete?: never;
@@ -308,6 +328,19 @@ export interface components {
             isMassIssue: boolean;
             /** @description Availability flag. */
             isAvailable: boolean;
+        };
+        /** @description Year summary with stamp count. */
+        YearSummaryDto: {
+            /**
+             * Format: int32
+             * @description Release year.
+             */
+            year: number;
+            /**
+             * Format: int64
+             * @description Number of stamps released in this year.
+             */
+            count: number;
         };
         /** @description Authenticated user profile. */
         UserDto: {
@@ -562,7 +595,9 @@ export interface operations {
     };
     getAllStamps: {
         parameters: {
-            query?: never;
+            query?: {
+                year?: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -576,6 +611,53 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["StampDto"][];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getStampYears: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Years retrieved. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["YearSummaryDto"][];
                 };
             };
             /** @description Unauthorized */

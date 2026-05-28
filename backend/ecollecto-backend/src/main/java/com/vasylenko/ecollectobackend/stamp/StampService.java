@@ -1,6 +1,7 @@
 package com.vasylenko.ecollectobackend.stamp;
 
 import com.vasylenko.ecollectobackend.dto.StampDto;
+import com.vasylenko.ecollectobackend.dto.YearSummaryDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +37,24 @@ public class StampService {
 
         return documents.stream()
                 .map(document -> stampMapper.toDto(document, designerNames))
+                .collect(Collectors.toList());
+    }
+
+    public List<StampDto> findByYear(int year) {
+        List<StampDocument> documents = stampRepository.findByReleaseYear(year);
+        Set<String> designerIds = documents.stream()
+                .map(StampDocument::getMeta).filter(Objects::nonNull)
+                .map(StampDocument.Meta::getDesignerIds).filter(Objects::nonNull)
+                .flatMap(Collection::stream).collect(Collectors.toSet());
+        Map<String, String> designerNames = loadDesignerNames(designerIds);
+        return documents.stream()
+                .map(doc -> stampMapper.toDto(doc, designerNames))
+                .collect(Collectors.toList());
+    }
+
+    public List<YearSummaryDto> findDistinctYears() {
+        return stampRepository.findDistinctReleaseYears().stream()
+                .map(yc -> new YearSummaryDto(yc.getYear(), yc.getCount()))
                 .collect(Collectors.toList());
     }
 

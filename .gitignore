@@ -192,3 +192,4 @@ gradle-app.setting
 /.idea/
 /frontend/ecollecto-ui/dist/
 /.vscode/
+/backend/ecollecto-backend/src/main/resources/migration-data/**

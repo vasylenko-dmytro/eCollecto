@@ -175,8 +175,15 @@ paths:
       tags:
       - Stamps
       summary: List stamps
-      description: Retrieve all stamps.
+      description: "Retrieve all stamps, optionally filtered by year."
       operationId: getAllStamps
+      parameters:
+      - name: year
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
       responses:
         "200":
           description: Stamps retrieved.
@@ -186,6 +193,40 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/StampDto"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Server error.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/stamps/years:
+    get:
+      tags:
+      - Stamps
+      summary: List stamp years
+      description: "Retrieve distinct release years with stamp counts, sorted descending."
+      operationId: getStampYears
+      responses:
+        "200":
+          description: Years retrieved.
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/YearSummaryDto"
         "401":
           description: Unauthorized
           content:
@@ -604,6 +645,21 @@ components:
       - isAvailable
       - isMassIssue
       - printQuantity
+      - year
+    YearSummaryDto:
+      type: object
+      description: Year summary with stamp count.
+      properties:
+        year:
+          type: integer
+          format: int32
+          description: Release year.
+        count:
+          type: integer
+          format: int64
+          description: Number of stamps released in this year.
+      required:
+      - count
       - year
     UserDto:
       type: object

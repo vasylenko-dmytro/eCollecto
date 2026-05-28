@@ -41,6 +41,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // ─── Public catalog (readable by everyone) ───
                 .requestMatchers(HttpMethod.GET, "/api/stamps").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/stamps/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/stamp/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/first-day-covers").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/first-day-covers/**").permitAll()
