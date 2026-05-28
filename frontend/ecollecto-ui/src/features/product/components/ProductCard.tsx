@@ -25,9 +25,9 @@ export default function ProductGrid({ product }: { product: Product }) {
   return (
     <div className="group flex flex-col">
       <div className="relative">
-        <div className="aspect-square bg-gray-300 rounded-xl overflow-hidden">
+        <div className="aspect-square bg-neutral-800 rounded-xl overflow-hidden">
           <img
-            className="w-full h-full object-contain p-4"
+            className="w-full h-full object-contain p-4 drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)]"
             src={product.images.small}
             alt={product.name}
             loading="lazy"

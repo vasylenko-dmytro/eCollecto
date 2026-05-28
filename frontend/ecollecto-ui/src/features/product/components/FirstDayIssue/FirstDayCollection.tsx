@@ -39,57 +39,31 @@ export default function FirstDayCollection({product}: { product: FirstDayIssue }
 
         <div className="flex-1 flex flex-col justify-between">
           <div>
-            <h3 className="font-medium md:text-xl text-black dark:text-white mb-4">
+            <h3 className="text-xl font-bold text-black dark:text-white mb-4">
               {product.name}
             </h3>
 
-            <div className="py-3 border-t border-gray-300 dark:border-neutral-900">
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <span className="font-medium text-black dark:text-white">Envelop SKU:</span>
-                </div>
-                <div className="flex justify-end">
-                  <span className="text-black dark:text-white">{product.envelopeSKU}</span>
-                </div>
-              </div>
+            <div className="grid grid-cols-2 gap-x-8 gap-y-2 mt-4">
+              <span className="text-gray-400">Envelop SKU:</span>
+              <span className="text-black dark:text-white">{product.envelopeSKU}</span>
 
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <span className="font-medium text-black dark:text-white">Postmark SKU:</span>
-                </div>
-                <div className="flex justify-end">
-                  <span className="text-black dark:text-white">{product.postmarkSKU}</span>
-                </div>
-              </div>
-            </div>
+              <span className="text-gray-400">Postmark SKU:</span>
+              <span className="text-black dark:text-white">{product.postmarkSKU}</span>
 
-            <div className="py-3 border-t border-gray-300 dark:border-neutral-900">
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <span className="font-medium text-black dark:text-white">Designer:</span>
-                </div>
-                <div className="flex justify-end">
-                  <span className="text-black dark:text-white">{product.designer}</span>
-                </div>
-              </div>
-            </div>
+              <span className="text-gray-400">Designer:</span>
+              <span className="text-black dark:text-white">{product.designer}</span>
 
-            <div className="py-3 border-t border-gray-300 dark:border-neutral-900">
-              <div className="flex justify-between items-center">
-                <span className="font-medium text-black dark:text-white">Print Quantity:</span>
-                <span className="text-black dark:text-white">{product.release.printQuantity.toLocaleString()}</span>
-              </div>
-            </div>
+              <span className="text-gray-400">Print Quantity:</span>
+              <span className="text-black dark:text-white">{product.release.printQuantity.toLocaleString()}</span>
 
-            <div className="py-3 border-t border-gray-300 dark:border-neutral-900">
-              <div className="flex justify-between items-center">
-                <span className="font-medium text-black dark:text-white">Date:</span>
-                <span className="text-black dark:text-white">{new Date(product.release.date).toLocaleDateString('en-GB', {
+              <span className="text-gray-400">Date:</span>
+              <span className="text-black dark:text-white">
+                {new Date(product.release.date).toLocaleDateString('en-GB', {
                   day: '2-digit',
                   month: 'long',
                   year: 'numeric',
-                })}</span>
-              </div>
+                })}
+              </span>
             </div>
           </div>
         </div>

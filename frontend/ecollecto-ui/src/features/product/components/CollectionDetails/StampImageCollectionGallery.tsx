@@ -4,8 +4,8 @@ import defaultImg from "@/assets/images/default.png";
 export default function StampImageCollectionGallery({product}: { product: Product }) {
   return (
     <div>
-      <div className="aspect-square bg-gray-400 rounded-xl overflow-hidden">
-        <img className="w-full h-full object-contain p-4 grayscale"
+      <div className="aspect-square bg-neutral-800 rounded-xl overflow-hidden">
+        <img className="w-full h-full object-contain p-4 grayscale drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)]"
              src={product.images.small}
              alt={product.name}
              loading="lazy"
