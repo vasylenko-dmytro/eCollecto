@@ -4,6 +4,7 @@ import type {Product} from '../../features/product/types/product';
 import {ProductSchema} from '../../features/product/types/schemas/product.schema';
 import {ProductCard} from '../../features/product';
 import NoSearchResults from "../../features/product/components/NoSearchResults";
+import {fetchAllStamps} from "../../shared/api/stampsApi";
 
 export default function HomePage({searchTerm}: { searchTerm: string }) {
   const [products, setProducts] = useState<Product[]>([]);
@@ -18,11 +19,7 @@ export default function HomePage({searchTerm}: { searchTerm: string }) {
       try {
         setIsLoading(true);
         setError(null);
-        const response = await fetch("/api/stamps", {signal: controller.signal});
-        if (!response.ok) {
-          throw new Error(`Failed to load products (${response.status})`);
-        }
-        const raw = await response.json();
+        const raw = await fetchAllStamps(controller.signal);
         const data = ProductSchema.array().parse(raw);
         if (isMounted) {
           setProducts(data);

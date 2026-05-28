@@ -6,6 +6,8 @@ import NotFoundPage from "../NotFound/NotFoundPage";
 import StampContainer from "../../features/product/components/StampContainer";
 import InformationSection from "../../features/product/components/ProductSpecDetails/InformationSection";
 import React, {useEffect, useState} from "react";
+import {fetchStampById} from "../../shared/api/stampsApi";
+import {ApiError} from "../../shared/api/apiClient";
 
 export default function ProductPage() {
 
@@ -30,23 +32,17 @@ export default function ProductPage() {
         setIsLoading(true);
         setError(null);
         setIsNotFound(false);
-        const response = await fetch(`/api/stamp/${id}`, {signal: controller.signal});
-        if (response.status === 404) {
-          if (isMounted) {
-            setIsNotFound(true);
-          }
-          return;
-        }
-        if (!response.ok) {
-          throw new Error(`Failed to load product (${response.status})`);
-        }
-        const raw = await response.json();
+        const raw = await fetchStampById(id, controller.signal);
         const data = ProductSchema.parse(raw);
         if (isMounted) {
           setProduct(data);
         }
       } catch (err) {
         if (err instanceof DOMException && err.name === "AbortError") {
+          return;
+        }
+        if (err instanceof ApiError && err.status === 404) {
+          if (isMounted) setIsNotFound(true);
           return;
         }
         if (isMounted) {

@@ -4,6 +4,7 @@ import FirstDayCollection
   from "../../features/product/components/FirstDayIssue/FirstDayCollection";
 import NoSearchResults from "../../features/product/components/NoSearchResults";
 import React, {useEffect, useState} from "react";
+import {fetchFirstDayCovers} from "../../shared/api/catalogApi";
 
 export default function FirstDayPage({searchTerm}: { searchTerm: string }) {
   const [collectionProducts, setCollectionProducts] = useState<FirstDayIssue[]>([]);
@@ -18,13 +19,7 @@ export default function FirstDayPage({searchTerm}: { searchTerm: string }) {
       try {
         setIsLoading(true);
         setError(null);
-        const response = await fetch("/api/first-day-covers", {
-          signal: controller.signal,
-        });
-        if (!response.ok) {
-          throw new Error(`Failed to load first day covers (${response.status})`);
-        }
-        const raw = await response.json();
+        const raw = await fetchFirstDayCovers(controller.signal);
         const data = FirstDayIssueSchema.array().parse(raw);
         if (isMounted) {
           setCollectionProducts(data);
