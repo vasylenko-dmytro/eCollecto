@@ -3,7 +3,8 @@
 Spring Boot service that serves the eCollecto stamp collection data via a REST API backed by MongoDB. Public catalog endpoints are open; user profile endpoints are protected with Keycloak-issued JWTs.
 
 ## Features
-- Public REST endpoints for stamps, first-day covers, designers, and tariffs
+- Public REST endpoints for stamps (`GET /api/stamps`, `GET /api/stamps/years`, `GET /api/stamp/{id}`), first-day covers, designers, and tariffs
+- Optional `?year=` filter on `GET /api/stamps` for per-year catalog views; `GET /api/stamps/years` returns distinct release years with stamp counts (sorted descending)
 - Protected user profile endpoint (`GET /api/me`) — requires Bearer JWT
 - MongoDB persistence with Spring Data repositories
 - MapStruct-based DTO mapping (no manual field-by-field mapping in services)
@@ -67,21 +68,22 @@ JaCoCo report output: `backend/ecollecto-backend/build/reports/jacoco/test/html/
 Base path: `/api`
 
 ### Public endpoints
-| Endpoint | Description |
-|---|---|
-| `GET /api/stamps` | Paginated stamp catalog |
-| `GET /api/stamp/{id}` | Single stamp detail |
-| `GET /api/first-day-covers` | First-day cover list |
-| `GET /api/first-day-covers/{id}` | Single first-day cover |
-| `GET /api/designers` | Designer list |
-| `GET /api/designer/{id}` | Single designer |
-| `GET /api/tariffs` | All tariff years |
-| `GET /api/tariffs/{year}/{currency}` | Tariffs for year/currency |
-| `GET /api/tariffs/{year}/{currency}/{letter}` | Single tariff entry |
+| Endpoint                                      | Description                                                                      |
+|-----------------------------------------------|----------------------------------------------------------------------------------|
+| `GET /api/stamps`                             | All stamps; optional `?year={year}` query param filters to a single release year |
+| `GET /api/stamps/years`                       | Distinct release years with stamp counts, sorted descending                      |
+| `GET /api/stamp/{id}`                         | Single stamp detail                                                              |
+| `GET /api/first-day-covers`                   | First-day cover list                                                             |
+| `GET /api/first-day-covers/{id}`              | Single first-day cover                                                           |
+| `GET /api/designers`                          | Designer list                                                                    |
+| `GET /api/designer/{id}`                      | Single designer                                                                  |
+| `GET /api/tariffs`                            | All tariff years                                                                 |
+| `GET /api/tariffs/{year}/{currency}`          | Tariffs for year/currency                                                        |
+| `GET /api/tariffs/{year}/{currency}/{letter}` | Single tariff entry                                                              |
 
 ### Protected endpoints (Bearer JWT required)
-| Endpoint | Description |
-|---|---|
+| Endpoint      | Description                                             |
+|---------------|---------------------------------------------------------|
 | `GET /api/me` | Authenticated user profile (auto-created on first call) |
 
 Error responses follow:
@@ -95,6 +97,97 @@ Error responses follow:
 ```
 
 See full examples in `doc/API.md`. Interactive docs available at `http://localhost:8080/swagger-ui.html`.
+
+## Database Seeding
+
+Stamp and designer data is loaded from JSON files on the classpath via `DataInitializer` — a Spring `ApplicationRunner` that runs once at startup when the `seed` profile is active.
+
+### How it works
+
+| Detail                 | Value                                                                          |
+|------------------------|--------------------------------------------------------------------------------|
+| Class                  | `config/DataInitializer.java`                                                  |
+| Guard                  | `@ConditionalOnProperty(name = "app.data.init.enabled", havingValue = "true")` |
+| Seed files (classpath) | `src/main/resources/migration-data/ua/stamp.json`                              |
+|                        | `src/main/resources/migration-data/ua/tariffs.json`                            |
+|                        | `src/main/resources/migration-data/ua/designers.json`                          |
+|                        | `src/main/resources/migration-data/ua/first_day_covers.json`                   |
+| Strategy               | `replaceOne` with `upsert = true` — keyed on `_id`                             |
+| **Idempotent**         | ✅ Safe to re-run. Existing records are overwritten; no duplicates are created. |
+
+The initializer is **disabled by default** (`app.data.init.enabled=false` in `application.properties`) and in the test profile. It activates only when the `seed` Spring profile is loaded.
+
+---
+
+### Run the seed (first time or after data update)
+
+```powershell
+# From the repo root
+.\gradlew.bat :backend:ecollecto-backend:bootRun --args="--spring.profiles.active=seed"
+```
+
+**Expected log output:**
+```
+DataInitializer: starting seed...
+DataInitializer: upserted 135 records into 'designers'
+DataInitializer: upserted 2500 records into 'stamp'
+DataInitializer: seed complete.
+```
+
+Stop the server (`Ctrl+C`) after the seed completes — the `seed` profile is not needed for normal operation.
+
+---
+
+### Update seed data
+
+1. Edit the source JSON files in **`collection/ua/`** at the repo root (canonical source of truth):
+   ```
+   collection/ua/stamp.json
+   collection/ua/designers.json
+   ```
+
+2. Copy the updated files into the classpath resources folder:
+   ```powershell
+   $dest = "backend/ecollecto-backend/src/main/resources/migration-data/ua"
+   Copy-Item "collection/ua/stamp.json"     -Destination $dest -Force
+   Copy-Item "collection/ua/designers.json" -Destination $dest -Force
+   ```
+
+3. Re-run the seed profile (see command above). Because the operation is `upsert` by `_id`:
+   - **Changed records** — overwritten with new data.
+   - **New records** — inserted.
+   - **Removed records** — remain in MongoDB (manual deletion needed if necessary).
+
+4. Commit both the source (`collection/ua/`) and classpath copies (`migration-data/ua/`) together.
+
+---
+
+### Add a new seed collection
+
+1. Create (or copy) the JSON file into `src/main/resources/migration-data/ua/<name>.json`.  
+   Each document must have a top-level `_id` field.
+
+2. Register it in `DataInitializer.run()`:
+   ```java
+   seedCollection("migration-data/ua/<name>.json", "<mongo-collection-name>");
+   ```
+
+3. Re-run the seed profile.
+
+---
+
+### Enable via environment variable (Docker / CI)
+
+Instead of the `seed` profile you can set the property directly:
+
+```bash
+APP_DATA_INIT_ENABLED=true ./gradlew :backend:ecollecto-backend:bootRun
+# or in docker-compose.yml:
+environment:
+  APP_DATA_INIT_ENABLED: "true"
+```
+
+> **Never** set `app.data.init.enabled=true` in the default `application.properties` or in `src/test/resources/application.properties` — seeding must not run automatically during tests.
 
 ## Project Structure
 ```
@@ -116,4 +209,3 @@ src/main/resources/
 src/test/java/     unit and web layer tests
 doc/               API.md, features/AI_list.md
 openapi.yaml       auto-generated OpenAPI 3 spec (do not edit manually)
-```
