@@ -11,7 +11,7 @@ This is the single canonical post-MVP delivery plan. It covers the engineering f
 - **Known state:**
   - **[RESOLVED]** DTOs are flattened for UI consumption; backend/frontend payload shape alignment is critical. `StampMapper` converts nested MongoDB structures (`denomination` object → string, `designerIds` array → resolved comma-joined name string, `themes` array → comma-joined string). The full pipeline is now automated: `StampMapper` → `openapi.yaml` (via `OpenApiSpecTest`) → `api.generated.ts` + `schemas.generated.ts` (via `npm run generate`) → TypeScript types (via `z.infer<>`). A change to any mapper output field automatically propagates to frontend types on next `generate` run.
   - **[RESOLVED]** Zod schemas added for runtime validation; OpenAPI contract validation added — `openapi.yaml` is generated from controller annotations by `OpenApiSpecTest`, CI fails on drift.
-  - **[SOLUTION]** Frontend uses local `useEffect` + `fetch` + `AbortController`; minimal shared state in `App.tsx`.
+  - **[RESOLVED]** Frontend uses local `useEffect` + `AbortController` with typed API wrappers (`src/shared/api/stampsApi.ts`); minimal shared state in `App.tsx` (search term only).
   - **[RESOLVED]** Browser-side `mongoose` schema files removed; plain TypeScript interfaces used instead.
   - **[RESOLVED]** Backend tests exist; frontend test coverage is absent.
   - **[RESOLVED]** Docker Compose added (MongoDB + Keycloak). 
@@ -47,13 +47,13 @@ Engineering foundations needed before protected user features and AI integration
   - Update `docker-compose.yml` with a commented-out `ecollecto-backend` service block so it is ready for staging/production without changing the dev workflow.
 
 ### 2. Frontend modernization
-- **[SOLUTION]** Keep functional components as the standard UI model.
+- **[RESOLVED]** Keep functional components as the standard UI model.
 - **[RESOLVED]** **Remove browser-side `mongoose` usage** from `src/features/product/schema/*` immediately — this is architecturally wrong in a browser bundle.
   - **[RESOLVED]** Replace with plain TypeScript interfaces where only typing is needed.
   - **[RESOLVED]** Replace with Zod/Yup schemas where runtime validation is needed.
 - **[RESOLVED]** Introduce **Redux Toolkit** for cross-page shared state only:
   - **[RESOLVED]** auth/session, current user profile, collection / wishlist / favorites, AI chat session and recommendation results, async request status for protected features.
-- **[SOLUTION]** Keep local component state in `useState`.
+- **[RESOLVED]** Keep local component state in `useState`.
 - **[RESOLVED]** Use **Redux thunks** for business-level async API calls: session bootstrap, profile load, collection updates, AI requests, protected route data.
 - Adopt **Formik + Yup** for operationally important forms: profile settings, collection item metadata, admin enrichment forms.
 - **[RESOLVED]** Continue with **React Router** — add clear route groups: public routes, authenticated routes, admin routes.
