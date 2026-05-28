@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 export default function Footer() {
   return (
     <footer className="bg-gray-900 w-full dark:bg-neutral-950">
@@ -5,8 +7,8 @@ export default function Footer() {
         {/* Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
           <div className="col-span-full lg:col-span-1">
-            <a className="flex-none text-xl font-semibold text-white focus:outline-hidden focus:opacity-80"
-               href="/" aria-label="Brand">sCollecto</a>
+            <Link className="flex-none text-xl font-semibold text-white focus:outline-hidden focus:opacity-80"
+               to="/" aria-label="Brand">eCollecto</Link>
           </div>
           {/* End Col */}
 
@@ -56,11 +58,11 @@ export default function Footer() {
                          className="py-2.5 sm:py-3 px-4 block w-full border-transparent rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-transparent dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
                          placeholder="Enter your email"/>
                 </div>
-                <a
-                  className="w-full sm:w-auto whitespace-nowrap p-3 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
-                  href="#">
+                <button
+                  type="button"
+                  className="w-full sm:w-auto whitespace-nowrap p-3 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
                   Subscribe
-                </a>
+                </button>
               </div>
             </form>
           </div>

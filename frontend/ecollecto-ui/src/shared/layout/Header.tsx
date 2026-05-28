@@ -40,7 +40,7 @@ export default function Header({onSearch}: { onSearch: (term: string) => void })
         <div className="flex items-center justify-between">
           <Link className="flex items-center font-semibold text-xl text-black dark:text-white focus:outline-hidden"
              to="/" aria-label="Brand">
-            <img src={brandIcon} alt="sCollecto" className="h-8 w-auto"/>
+            <img src={brandIcon} alt="eCollecto" className="h-8 w-auto"/>
           </Link>
 
           <div className="md:hidden flex items-center gap-1">
