@@ -35,10 +35,10 @@ Engineering foundations needed before protected user features and AI integration
 - **[RESOLVED]** Add bootstrap docs so a new engineer can bring up dependencies without manual installation.
 - **[RESOLVED]** Keep Spring and frontend config environment-driven so local, CI, and Docker environments share the same wiring.
 - Add **data seeding and index initialization via `ApplicationRunner`** before user-domain and write-flow document structures start changing. Flamingock (the Mongock successor) is still in beta (`0.0.x`) and has no stable Spring Boot 4 support; Mongock 5.x likewise has no official Spring Boot 4 release. Pure Spring `ApplicationRunner` is the zero-dependency, guaranteed-compatible choice for this project stack.
-  - Create `src/main/java/com/vasylenko/ecollectobackend/config/DataInitializer.java` — a `@Component` implementing `ApplicationRunner`, guarded by `@ConditionalOnProperty(name = "app.data.init.enabled", havingValue = "true")`.
-  - **Seed run** (`V001`): load `collection/ua/designers.json` and `collection/ua/stamp.json` from classpath (`src/main/resources/migration-data/ua/`); use `MongoTemplate` upsert-by-`_id` so the operation is idempotent and safe to re-run.
+  - **[RESOLVED]** Create `src/main/java/com/vasylenko/ecollectobackend/config/DataInitializer.java` — a `@Component` implementing `ApplicationRunner`, guarded by `@ConditionalOnProperty(name = "app.data.init.enabled", havingValue = "true")`.
+  - **[RESOLVED]** **Seed run** (`V001`): load `collection/ua/designers.json` and `collection/ua/stamp.json` from classpath (`src/main/resources/migration-data/ua/`); use `MongoTemplate` upsert-by-`_id` so the operation is idempotent and safe to re-run.
   - **Index run** (`V002`): declare unique compound index `{ userId, stampId }` on `user_collections`, `user_wishlists`, `user_favorites` via `MongoTemplate.indexOps(...).ensureIndex(...)` — idempotent by design (`ensureIndex` is a no-op if the index already exists).
-  - Enable with `app.data.init.enabled=true` in `application-seed.properties` or via environment variable `APP_DATA_INIT_ENABLED=true`; stays `false` in the default `application.properties` and in `src/test/resources/application.properties`.
+  - **[RESOLVED]** Enable with `app.data.init.enabled=true` in `application-seed.properties` or via environment variable `APP_DATA_INIT_ENABLED=true`; stays `false` in the default `application.properties` and in `src/test/resources/application.properties`.
   - Must run (seed profile active) before any `CollectionItemDocument`, `WishlistItemDocument`, or `FavoriteDocument` write operations reach production. Re-evaluate migration to a dedicated tool (Flyway-Mongo fork or stable Flamingock GA) once Spring Boot 4 support is confirmed.
 - Add a **Dockerfile for the Spring Boot backend** (`backend/ecollecto-backend/Dockerfile`) — currently `docker-compose.yml` only starts MongoDB and Keycloak, not the app itself.
   - Use Eclipse Temurin 25 JRE slim base image.
@@ -271,16 +271,16 @@ Do **not** rewrite the UI. Work incrementally:
 
 Consolidated list of concrete next actions, ordered by dependency and impact.
 
-| Priority | Item | Track | Notes |
-|----------|------|-------|-------|
-| 🔴 Critical | Add `DataInitializer` (ApplicationRunner): seed `ua/` data + create compound indexes | Track 1 §1 | Must run before Block B writes any user documents; Flamingock/Mongock have no stable Spring Boot 4 support |
-| 🔴 Critical | Explicit OpenAPI diff-check in CI git step | Track 1 §3 | Deterministic stale-spec protection |
-| 🔴 Critical | Decide API versioning strategy, document in `API.md` | Track 2 §8 | Blocker before Block B endpoints are published |
-| 🟡 High | Mock JWT test profile / Testcontainers for Keycloak | Track 2 §8 | Integration tests must not require live Docker stack |
-| 🟡 High | Fix CORS to read from `application.properties` | Track 2 §8 | Currently hardcoded despite ROADMAP saying resolved |
-| 🟡 High | Offset pagination on `GET /api/stamps` and `GET /api/stamps?year=` | Track 2 §7 | Needed before YearStampsPage ships |
-| 🟡 High | Add Dockerfile for `ecollecto-backend` | Track 1 §1 | Required for staging/production deployment |
-| 🟠 Medium | Add Playwright E2E suite covering auth flow | Track 1 §3 | Auth Code + PKCE flow cannot be unit tested |
-| 🟠 Medium | Move DTOs into feature packages (after Block B) | Track 2 §8 | Maintain vertical-slice consistency; requires generate cycle |
-| 🟢 Low | Add Testcontainers MongoDB to existing integration tests | Track 2 §8 | Improves test isolation; deterministic state |
+| Priority    | Item                                                                                 | Track      | Notes                                                                                        |
+|-------------|--------------------------------------------------------------------------------------|------------|----------------------------------------------------------------------------------------------|
+| 🔴 Critical | Add `DataInitializer` (ApplicationRunner): seed `ua/` data + create compound indexes | Track 1 §1 | ✅ Seed V001; compound index V002 still pending (needed before Block B writes user documents) |
+| 🔴 Critical | Explicit OpenAPI diff-check in CI git step                                           | Track 1 §3 | Deterministic stale-spec protection                                                          |
+| 🔴 Critical | Decide API versioning strategy, document in `API.md`                                 | Track 2 §8 | Blocker before Block B endpoints are published                                               |
+| 🟡 High     | Mock JWT test profile / Testcontainers for Keycloak                                  | Track 2 §8 | Integration tests must not require live Docker stack                                         |
+| 🟡 High     | Fix CORS to read from `application.properties`                                       | Track 2 §8 | Currently hardcoded despite ROADMAP saying resolved                                          |
+| 🟡 High     | Offset pagination on `GET /api/stamps` and `GET /api/stamps?year=`                   | Track 2 §7 | Needed before YearStampsPage ships                                                           |
+| 🟡 High     | Add Dockerfile for `ecollecto-backend`                                               | Track 1 §1 | Required for staging/production deployment                                                   |
+| 🟠 Medium   | Add Playwright E2E suite covering auth flow                                          | Track 1 §3 | Auth Code + PKCE flow cannot be unit tested                                                  |
+| 🟠 Medium   | Move DTOs into feature packages (after Block B)                                      | Track 2 §8 | Maintain vertical-slice consistency; requires generate cycle                                 |
+| 🟢 Low      | Add Testcontainers MongoDB to existing integration tests                             | Track 2 §8 | Improves test isolation; deterministic state                                                 |
 

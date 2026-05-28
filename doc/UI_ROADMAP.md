@@ -18,7 +18,7 @@ All guidance from `ecollecto_uxui_improvement_guide.md` has been merged here —
 **Goal:** Replace "load all 2500 stamps at once" with lazy year-based browsing.
 Each year card loads only its stamps on demand (~30–80 records instead of the full list).
 
-### A1 · Backend — `GET /api/stamps/years` and `GET /api/stamps?year={year}`
+### **[RESOLVED]** A1 · Backend — `GET /api/stamps/years` and `GET /api/stamps?year={year}`
 
 **Files:** `StampRepository.java`, `StampService.java`, `StampController.java`
 
@@ -28,13 +28,13 @@ Each year card loads only its stamps on demand (~30–80 records instead of the 
 - Extend `GET /api/stamps` with optional `?year=` query parameter; existing call without parameter stays unchanged (backward-compatible).
 - Add OpenAPI `@Operation` / `@ApiResponse` annotations to the new overload.
 
-### A2 · Backend — Regenerate contract
+### **[RESOLVED]** A2 · Backend — Regenerate contract
 
 - Run `./gradlew.bat :backend:ecollecto-backend:test` to regenerate `openapi.yaml` via `OpenApiSpecTest`.
 - Run `npm run generate` to regenerate `api.generated.ts` and `schemas.generated.ts`.
 - Commit both generated files so CI stays green.
 
-### A3 · Frontend — `LandingPage` (`/`)
+### **[RESOLVED]** A3 · Frontend — `LandingPage` (`/`)
 
 **New file:** `src/pages/Landing/LandingPage.tsx`
 
@@ -53,7 +53,7 @@ Structure from UX Guide §6:
 
 3. **Featured Releases** — 3–4 `ProductCard` components loaded from `GET /api/stamps?year=<latest_year>` (cheapest query, no extra endpoint needed).
 
-### A4 · Frontend — `CatalogPage` (`/stamps`)
+### **[RESOLVED]** A4 · Frontend — `CatalogPage` (`/stamps`)
 
 **New file:** `src/pages/Catalog/CatalogPage.tsx`
 
@@ -63,7 +63,7 @@ Structure from UX Guide §6:
 - Search input from `App.tsx` filters the visible year cards client-side (tiny array, no performance concern).
 - Current `HomePage.tsx` is renamed/repurposed as `CatalogPage`.
 
-### A5 · Frontend — `YearStampsPage` (`/stamps/year/:year`)
+### **[RESOLVED]** A5 · Frontend — `YearStampsPage` (`/stamps/year/:year`)
 
 **New file:** `src/pages/Catalog/YearStampsPage.tsx`
 
@@ -76,7 +76,7 @@ Structure from UX Guide §6:
 
 ### A6 · Frontend — Routing + UX fixes
 
-**File:** `src/app/App.tsx`
+**[RESOLVED]** **File:** `src/app/App.tsx`
 
 - Move `/` → `LandingPage`.
 - Add `/stamps` → `CatalogPage`.
@@ -376,7 +376,7 @@ These items come from the original UX guide. They have no backend or Redux depen
 Pages keep their `useState` + `useEffect` + `AbortController` pattern (no new dependency),
 but they call a named function instead of an inline `fetch('/api/...')`.
 
-### G1 · `src/shared/api/stampsApi.ts`
+### **[RESOLVED]** G1 · `src/shared/api/stampsApi.ts`
 
 ```typescript
 import { apiFetch } from './apiClient';
@@ -496,8 +496,8 @@ interface PaginationControlsProps {
 | §5 | No active NavLink highlight | `Header.tsx` `NavLink` active style (A6) | ⏳ Outstanding |
 | §5 | Footer input/button height mismatch + wrong element type | `Footer.tsx` unified height wrapper + `<button>` (F4) | ⏳ Outstanding |
 | §5 | Footer brand link not a React Router `<Link>` | `Footer.tsx` (F3) | ⏳ Outstanding |
-| §6 | No landing / welcome page | `LandingPage` (A3) | ⏳ Block A |
-| — | Inline fetch boilerplate in every page | Typed API wrappers in `shared/api/` (G1–G4) | ⏳ Block G |
+| §6 | No landing / welcome page | `LandingPage` (A3) | ✅ **[RESOLVED]** |
+| — | Inline fetch boilerplate in every page | Typed API wrappers in `shared/api/` (G1–G4) | ⏳ G1 **[RESOLVED]**, G2–G4 pending |
 | — | No pagination — loads all ~2500 stamps | `PaginationControls` + URL state (H1–H3) | ⏳ Block H |
 
 ---
