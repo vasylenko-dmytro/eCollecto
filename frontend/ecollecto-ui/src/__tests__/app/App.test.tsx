@@ -14,7 +14,19 @@ vi.mock('../../features/auth/hooks/useAuth', () => ({
   }),
 }));
 
+// Mock react-oidc-context so LandingPage's direct useAuth() call works
+vi.mock('react-oidc-context', () => ({
+  useAuth: () => ({
+    isAuthenticated: false,
+    signinRedirect: vi.fn(),
+  }),
+}));
+
 // Mock all page components to isolate routing logic
+vi.mock('../../pages/Landing/LandingPage', () => ({
+  default: () => <div data-testid="landing-page">Landing Page</div>,
+}));
+
 vi.mock('../../pages/Home/HomePage', () => ({
   default: ({ searchTerm }: { searchTerm: string }) => (
     <div data-testid="home-page">Home – searchTerm: "{searchTerm}"</div>
@@ -41,6 +53,18 @@ vi.mock('../../pages/NotFound/NotFoundPage', () => ({
   default: () => <div data-testid="notfound-page">Not Found</div>,
 }));
 
+vi.mock('../../pages/Catalog/CatalogPage', () => ({
+  default: ({ searchTerm }: { searchTerm: string }) => (
+    <div data-testid="catalog-page">Catalog – searchTerm: "{searchTerm}"</div>
+  ),
+}));
+
+vi.mock('../../pages/Catalog/YearStampsPage', () => ({
+  default: ({ searchTerm }: { searchTerm: string }) => (
+    <div data-testid="year-stamps-page">YearStamps – searchTerm: "{searchTerm}"</div>
+  ),
+}));
+
 // Prevent LanguageDropdown fetch calls
 vi.mock('../../features/product/components/HeaderDetails/LanguageDropdown', () => ({
   default: () => <div data-testid="lang-dropdown" />,
@@ -53,10 +77,10 @@ describe('App routing', () => {
     window.history.pushState({}, '', '/');
   });
 
-  it('renders HomePage at /', async () => {
+  it('renders LandingPage at /', async () => {
     render(<App />);
     await waitFor(() => {
-      expect(screen.getByTestId('home-page')).toBeInTheDocument();
+      expect(screen.getByTestId('landing-page')).toBeInTheDocument();
     });
   });
 
@@ -95,16 +119,16 @@ describe('App routing', () => {
   it('renders Header navigation links', () => {
     window.history.pushState({}, '', '/');
     render(<App />);
-    expect(screen.getByRole('link', { name: /stamps/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /catalog/i })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /first day of issue/i })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /collection/i })).toBeInTheDocument();
   });
 
-  it('passes empty searchTerm to HomePage initially', async () => {
-    window.history.pushState({}, '', '/');
+  it('passes empty searchTerm to CollectionPage initially', async () => {
+    window.history.pushState({}, '', '/collection');
     render(<App />);
     await waitFor(() => {
-      expect(screen.getByTestId('home-page')).toHaveTextContent('searchTerm: ""');
+      expect(screen.getByTestId('collection-page')).toHaveTextContent('searchTerm: ""');
     });
   });
 
@@ -129,6 +153,82 @@ describe('App routing', () => {
       await user.type(input, 'Ukraine');
       await waitFor(() => {
         expect(screen.getByTestId('collection-page')).toHaveTextContent('Ukraine');
+      });
+    }
+  });
+
+  // ── Routes added in multi-year refactor ───────────────────────────────────────
+
+  it('renders CatalogPage at /stamps', async () => {
+    window.history.pushState({}, '', '/stamps');
+    render(<App />);
+    await waitFor(() => {
+      expect(screen.getByTestId('catalog-page')).toBeInTheDocument();
+    });
+  });
+
+  it('renders YearStampsPage at /stamps/year/:year', async () => {
+    window.history.pushState({}, '', '/stamps/year/2024');
+    render(<App />);
+    await waitFor(() => {
+      expect(screen.getByTestId('year-stamps-page')).toBeInTheDocument();
+    });
+  });
+
+  it('renders 403 page at /forbidden', async () => {
+    window.history.pushState({}, '', '/forbidden');
+    render(<App />);
+    await waitFor(() => {
+      expect(screen.getByText(/403/)).toBeInTheDocument();
+    });
+  });
+
+  // ── searchTerm propagation ────────────────────────────────────────────────────
+
+  it('passes empty searchTerm to CatalogPage initially', async () => {
+    window.history.pushState({}, '', '/stamps');
+    render(<App />);
+    await waitFor(() => {
+      expect(screen.getByTestId('catalog-page')).toHaveTextContent('searchTerm: ""');
+    });
+  });
+
+  it('propagates searchTerm to FirstDayPage when header search fires', async () => {
+    window.history.pushState({}, '', '/firstday');
+    const user = userEvent.setup();
+    render(<App />);
+    await waitFor(() => expect(screen.getByTestId('firstday-page')).toBeInTheDocument());
+
+    const searchToggle = screen.getAllByRole('button').find(
+      (btn) => btn.querySelector('svg circle'),
+    );
+    if (searchToggle) await user.click(searchToggle);
+
+    const input = screen.queryByPlaceholderText(/Search stamps/i);
+    if (input) {
+      await user.type(input, 'Kyiv');
+      await waitFor(() => {
+        expect(screen.getByTestId('firstday-page')).toHaveTextContent('Kyiv');
+      });
+    }
+  });
+
+  it('propagates searchTerm to CatalogPage when header search fires', async () => {
+    window.history.pushState({}, '', '/stamps');
+    const user = userEvent.setup();
+    render(<App />);
+    await waitFor(() => expect(screen.getByTestId('catalog-page')).toBeInTheDocument());
+
+    const searchToggle = screen.getAllByRole('button').find(
+      (btn) => btn.querySelector('svg circle'),
+    );
+    if (searchToggle) await user.click(searchToggle);
+
+    const input = screen.queryByPlaceholderText(/Search stamps/i);
+    if (input) {
+      await user.type(input, 'Sunflower');
+      await waitFor(() => {
+        expect(screen.getByTestId('catalog-page')).toHaveTextContent('Sunflower');
       });
     }
   });
