@@ -12,12 +12,12 @@ without ever allowing the UI to load all records onto a single page.
 
 | Phase | Name                            | Status |
 |-------|---------------------------------|--------|
-| 1     | Backend: year endpoints         | TODO   |
-| 2     | Frontend: typed API wrappers    | TODO   |
-| 3     | Frontend: year navigation pages | TODO   |
-| 4     | Frontend: routing switch        | TODO   |
-| 5     | MongoDB seed                    | TODO   |
-| 6     | End-to-end verification         | TODO   |
+| 1     | Backend: year endpoints         | DONE   |
+| 2     | Frontend: typed API wrappers    | DONE   |
+| 3     | Frontend: year navigation pages | DONE   |
+| 4     | Frontend: routing switch        | DONE   |
+| 5     | MongoDB seed                    | DONE   |
+| 6     | End-to-end verification         | DONE   |
 
 ---
 
