@@ -8,6 +8,10 @@ import ProductPage from '../pages/Product/ProductPage';
 import NotFoundPage from '../pages/NotFound/NotFoundPage';
 import CollectionPage from '../pages/Collection/CollectionPage';
 import FirstDayPage from '../pages/FirstDay/FirstDayPage';
+import ProfilePage from '../pages/Profile/ProfilePage';
+import MyCollectionPage from '../pages/Profile/MyCollectionPage';
+import WishlistPage from '../pages/Profile/WishlistPage';
+import FavoritesPage from '../pages/Profile/FavoritesPage';
 import { ProtectedRoute } from './routes/ProtectedRoute';
 import { AdminRoute } from './routes/AdminRoute';
 
@@ -30,10 +34,10 @@ export default function App() {
 
             {/* ── Protected routes (ROLE_USER) ── */}
             <Route element={<ProtectedRoute />}>
-              {/* Block D: <Route path="/me" element={<ProfilePage />} /> */}
-              {/* Block D: <Route path="/me/collection" element={<MyCollectionPage />} /> */}
-              {/* Block D: <Route path="/me/wishlist" element={<WishlistPage />} /> */}
-              {/* Block D: <Route path="/me/favorites" element={<FavoritesPage />} /> */}
+              <Route path="/me"             element={<ProfilePage />} />
+              <Route path="/me/collection"  element={<MyCollectionPage />} />
+              <Route path="/me/wishlist"    element={<WishlistPage />} />
+              <Route path="/me/favorites"   element={<FavoritesPage />} />
             </Route>
 
             {/* ── Admin routes (ROLE_ADMIN) ── */}

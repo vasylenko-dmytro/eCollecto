@@ -4,6 +4,9 @@ import { useEffect } from 'react';
 import { useAuth as useOidcAuth } from 'react-oidc-context';
 import { setUser, clearUser } from '../../features/auth/authSlice';
 import { loadUserProfile } from '../../features/auth/authThunks';
+import { fetchCollection, resetCollection } from '../../features/collection/collectionSlice';
+import { fetchWishlist, resetWishlist } from '../../features/wishlist/wishlistSlice';
+import { fetchFavorites, resetFavorites } from '../../features/favorites/favoritesSlice';
 import type { AppDispatch } from '../store';
 
 const oidcConfig = {
@@ -32,8 +35,14 @@ function AuthSync({ children }: { children: React.ReactNode }) {
         roles: realmAccess?.roles ?? [],
       }));
       dispatch(loadUserProfile());
+      dispatch(fetchCollection());
+      dispatch(fetchWishlist());
+      dispatch(fetchFavorites());
     } else if (!oidcAuth.isLoading) {
       dispatch(clearUser());
+      dispatch(resetCollection());
+      dispatch(resetWishlist());
+      dispatch(resetFavorites());
     }
   }, [oidcAuth.isAuthenticated, oidcAuth.isLoading, oidcAuth.user, dispatch]);
 

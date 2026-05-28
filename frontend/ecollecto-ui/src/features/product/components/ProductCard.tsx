@@ -1,12 +1,25 @@
 import React, {useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 import { Product } from '../types/product';
 import defaultImg from '@/assets/images/default.png';
 import {formatStampValue} from "../../../shared/utils/stampHelpers";
+import { useAuth } from '../../auth/hooks/useAuth';
+import type { RootState, AppDispatch } from '../../../app/store';
+import { addToCollection, removeFromCollection } from '@/features/collection/collectionSlice';
+import { addToWishlist, removeFromWishlist } from '@/features/wishlist/wishlistSlice';
+import { addToFavorites, removeFromFavorites } from '@/features/favorites/favoritesSlice';
 
 export default function ProductGrid({ product }: { product: Product }) {
   const [formattedDenomination, setFormattedDenomination] = useState("N/A");
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
+  const { isAuthenticated } = useAuth();
+
+  const stampId = product.stamp_id;
+  const isInCollection = useSelector((state: RootState) => state.collection.stampIds.includes(stampId));
+  const isInWishlist   = useSelector((state: RootState) => state.wishlist.stampIds.includes(stampId));
+  const isInFavorites  = useSelector((state: RootState) => state.favorites.stampIds.includes(stampId));
 
   useEffect(() => {
     let active = true;
@@ -82,7 +95,63 @@ export default function ProductGrid({ product }: { product: Product }) {
         </div>
       </div>
 
-      <div className="mt-auto">
+      <div className="mt-auto flex flex-col gap-2">
+        {/* Action icon row — authenticated users only */}
+        {isAuthenticated && (
+          <div className="flex justify-end gap-2">
+            <button
+              type="button"
+              aria-label={isInCollection ? "Remove from collection" : "Add to collection"}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (isInCollection) {
+                  dispatch(removeFromCollection(stampId));
+                } else {
+                  dispatch(addToCollection(stampId));
+                }
+              }}
+              className="size-8 flex items-center justify-center rounded-full border border-gray-300 dark:border-neutral-600 hover:bg-gray-100 dark:hover:bg-neutral-700 transition text-lg leading-none"
+              title={isInCollection ? "Remove from collection" : "Add to collection"}
+            >
+              <span className={isInCollection ? "text-green-500" : "text-gray-400"}>✓</span>
+            </button>
+
+            <button
+              type="button"
+              aria-label={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (isInWishlist) {
+                  dispatch(removeFromWishlist(stampId));
+                } else {
+                  dispatch(addToWishlist(stampId));
+                }
+              }}
+              className="size-8 flex items-center justify-center rounded-full border border-gray-300 dark:border-neutral-600 hover:bg-gray-100 dark:hover:bg-neutral-700 transition text-lg leading-none"
+              title={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
+            >
+              <span className={isInWishlist ? "text-yellow-400" : "text-gray-400"}>★</span>
+            </button>
+
+            <button
+              type="button"
+              aria-label={isInFavorites ? "Remove from favorites" : "Save as favorite"}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (isInFavorites) {
+                  dispatch(removeFromFavorites(stampId));
+                } else {
+                  dispatch(addToFavorites(stampId));
+                }
+              }}
+              className="size-8 flex items-center justify-center rounded-full border border-gray-300 dark:border-neutral-600 hover:bg-gray-100 dark:hover:bg-neutral-700 transition text-lg leading-none"
+              title={isInFavorites ? "Remove from favorites" : "Save as favorite"}
+            >
+              <span className={isInFavorites ? "text-red-500" : "text-gray-400"}>♥</span>
+            </button>
+          </div>
+        )}
+
         <button
           type="button"
           onClick={() => navigate(`/stamps/${product.stamp_id}`)}

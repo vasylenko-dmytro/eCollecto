@@ -6,7 +6,8 @@ All guidance from `ecollecto_uxui_improvement_guide.md` has been merged here —
 
 > **Sync note (2026-05-28):** Sections corrected against actual code state.
 > **Updated 2026-05-28:** F3, F4, A6 (ProductCard UX), G2, G3, G4 — all resolved.
-> - All Block B–E items — not yet started.
+> **Updated 2026-05-28:** B1–B4 (backend user slices + contract), F1, F2 — all resolved.
+> **Updated 2026-05-29:** C1–C4 (Redux slices + auth bootstrap), D1–D4 (protected pages), E1–E3 (action icons + routing + NavLink active style) — all resolved.
 
 ---
 
@@ -100,7 +101,7 @@ Structure from UX Guide §6:
 All three follow the same vertical-slice pattern: `*Document` → `*Repository` → `*Service` → `*Controller`.
 Each item is stored in its own MongoDB collection (not embedded in `UserDocument`) for scalability.
 
-### B1 · Feature slice `collection/`
+### **[RESOLVED]** B1 · Feature slice `collection/`
 
 **New files:** `CollectionItemDocument.java`, `CollectionRepository.java`, `CollectionService.java`, `CollectionController.java`
 
@@ -123,7 +124,7 @@ Endpoints (all require Bearer JWT):
 | `POST`   | `/api/me/collection/items`           | Body: `{ stampId }` — adds stamp; returns 201 or 409 if already present |
 | `DELETE` | `/api/me/collection/items/{stampId}` | Removes stamp; returns 204 or 404                                       |
 
-### B2 · Feature slice `wishlist/`
+### **[RESOLVED]** B2 · Feature slice `wishlist/`
 
 **New files:** `WishlistItemDocument.java`, `WishlistRepository.java`, `WishlistService.java`, `WishlistController.java`
 
@@ -137,7 +138,7 @@ Endpoints:
 | `POST`   | `/api/me/wishlist/items`           | Body: `{ stampId }` — adds stamp                  |
 | `DELETE` | `/api/me/wishlist/items/{stampId}` | Removes stamp                                     |
 
-### B3 · Feature slice `favorites/`
+### **[RESOLVED]** B3 · Feature slice `favorites/`
 
 **New files:** `FavoriteDocument.java`, `FavoritesRepository.java`, `FavoritesService.java`, `FavoritesController.java`
 
@@ -151,17 +152,17 @@ Endpoints:
 | `POST`   | `/api/me/favorites/items`           | Body: `{ stampId }` — adds stamp             |
 | `DELETE` | `/api/me/favorites/items/{stampId}` | Removes stamp                                |
 
-### B4 · Regenerate contract
+### **[RESOLVED]** B4 · Regenerate contract
 
 Same as A2: run backend tests → commit `openapi.yaml` → run `npm run generate` → commit generated TS files.
 
 ---
 
-## Block C — Frontend: Redux Slices for User-Owned Data
+## Block C — Frontend: Redux Slices for User-Owned Data ✅
 
 **File:** `src/app/store.ts` — register three new reducers.
 
-### C1 · `src/features/collection/collectionSlice.ts`
+### **[RESOLVED]** C1 · `src/features/collection/collectionSlice.ts`
 
 ```typescript
 interface CollectionState {
@@ -175,7 +176,7 @@ Thunks (use existing `apiFetch` — JWT is attached automatically):
 - `addToCollection(stampId)` → `POST /api/me/collection/items`
 - `removeFromCollection(stampId)` → `DELETE /api/me/collection/items/{stampId}`
 
-### C2 · `src/features/wishlist/wishlistSlice.ts`
+### **[RESOLVED]** C2 · `src/features/wishlist/wishlistSlice.ts`
 
 ```typescript
 interface WishlistState {
@@ -186,7 +187,7 @@ interface WishlistState {
 
 Thunks: `fetchWishlist`, `addToWishlist(stampId)`, `removeFromWishlist(stampId)`.
 
-### C3 · `src/features/favorites/favoritesSlice.ts`
+### **[RESOLVED]** C3 · `src/features/favorites/favoritesSlice.ts`
 
 ```typescript
 interface FavoritesState {
@@ -197,21 +198,21 @@ interface FavoritesState {
 
 Thunks: `fetchFavorites`, `addToFavorites(stampId)`, `removeFromFavorites(stampId)`.
 
-### C4 · Bootstrap on login
+### **[RESOLVED]** C4 · Bootstrap on login
 
 **File:** `src/app/providers/AuthProvider.tsx`
 
-> ⚠️ **Hard blocker for Block E icon states:** `AuthProvider.tsx` currently dispatches only `setUser` + `loadUserProfile` after auth. Must also dispatch `fetchCollection`, `fetchWishlist`, `fetchFavorites` so icon states on catalog cards are correct from the first render. C1–C3 slices must exist before this step.
+> ✅ **Resolved:** `AuthProvider.tsx` dispatches `setUser` + `loadUserProfile` + `fetchCollection` + `fetchWishlist` + `fetchFavorites` after a successful auth session. Icon states on catalog cards are correct from the first render.
 
 After a successful auth session, also dispatch `fetchCollection`, `fetchWishlist`, `fetchFavorites`.
 
 ---
 
-## Block D — Frontend: Protected User Pages
+## Block D — Frontend: Protected User Pages ✅
 
 All four pages sit inside the existing `<ProtectedRoute>` wrapper in `App.tsx`.
 
-### D1 · `ProfilePage` (`/me`)
+### **[RESOLVED]** D1 · `ProfilePage` (`/me`)
 
 **New file:** `src/pages/Profile/ProfilePage.tsx`
 
@@ -223,7 +224,7 @@ All four pages sit inside the existing `<ProtectedRoute>` wrapper in `App.tsx`.
 - Quick-nav cards linking to `/me/collection`, `/me/wishlist`, `/me/favorites`.
 - Placeholder "Edit profile" button (Formik + Yup form — future `PATCH /api/me`).
 
-### D2 · `MyCollectionPage` (`/me/collection`)
+### **[RESOLVED]** D2 · `MyCollectionPage` (`/me/collection`)
 
 **New file:** `src/pages/Profile/MyCollectionPage.tsx`
 
@@ -236,7 +237,7 @@ All four pages sit inside the existing `<ProtectedRoute>` wrapper in `App.tsx`.
 - Hover interactions (UX Guide §4): uncollected → green `+` overlay; collected → `✓` checkmark.
 - `EmptyState` component: stamp album icon + *"Your album is empty!"* + yellow CTA → `/stamps`.
 
-### D3 · `WishlistPage` (`/me/wishlist`)
+### **[RESOLVED]** D3 · `WishlistPage` (`/me/wishlist`)
 
 **New file:** `src/pages/Profile/WishlistPage.tsx`
 
@@ -246,7 +247,7 @@ All four pages sit inside the existing `<ProtectedRoute>` wrapper in `App.tsx`.
   - "Remove" (× icon) → dispatches `removeFromWishlist`.
 - `EmptyState`: wishlist icon + *"Your wishlist is empty"* + CTA → `/stamps`.
 
-### D4 · `FavoritesPage` (`/me/favorites`)
+### **[RESOLVED]** D4 · `FavoritesPage` (`/me/favorites`)
 
 **New file:** `src/pages/Profile/FavoritesPage.tsx`
 
@@ -257,11 +258,11 @@ All four pages sit inside the existing `<ProtectedRoute>` wrapper in `App.tsx`.
 
 ---
 
-## Block E — Catalog Integration: Action Icons
+## Block E — Catalog Integration: Action Icons ✅
 
 **Goal:** Show ownership state on every stamp card and the product detail page.
 
-### E1 · `ProductCard.tsx` — icon row (authenticated users only)
+### **[RESOLVED]** E1 · `ProductCard.tsx` — icon row (authenticated users only)
 
 Three small icon buttons in the card footer, visible only when `isAuthenticated`:
 
@@ -273,12 +274,12 @@ Three small icon buttons in the card footer, visible only when `isAuthenticated`
 
 Icons are purely icon buttons with `aria-label`; they do not break the card's `<Link>` navigation.
 
-### E2 · `ProductPage.tsx` — action buttons
+### **[RESOLVED]** E2 · `ProductPage.tsx` — action buttons
 
 Same three actions as larger labeled buttons in the stamp detail view:
 *"Add to Collection"* / *"Add to Wishlist"* / *"Save as Favorite"* — toggling with visual feedback.
 
-### E3 · `App.tsx` — add protected routes
+### **[RESOLVED]** E3 · `App.tsx` — add protected routes
 
 ```tsx
 <Route element={<ProtectedRoute />}>
@@ -297,7 +298,7 @@ Add corresponding `NavLink` entries to `Header.tsx` for authenticated users (ava
 
 These items come from the original UX guide. They have no backend or Redux dependencies.
 
-### F1 · Stamp image — drop-shadow & contrast (`ProductCard.tsx`, `StampContainer.tsx`)
+### **[RESOLVED]** F1 · Stamp image — drop-shadow & contrast (`ProductCard.tsx`, `StampContainer.tsx`)
 
 **Issue (UX Guide §2):** Solid light-gray square behind the stamp image looks flat.
 
@@ -312,7 +313,7 @@ These items come from the original UX guide. They have no backend or Redux depen
   ```
 - Apply the same treatment to `StampImageCollectionGallery` (used on `CollectionPage`).
 
-### F2 · First Day of Issue page — layout & heading hierarchy (`FirstDayPage.tsx`, `FirstDayCollection.tsx`)
+### **[RESOLVED]** F2 · First Day of Issue page — layout & heading hierarchy (`FirstDayPage.tsx`, `FirstDayCollection.tsx`)
 
 **Issue (UX Guide §3):** Large empty space to the right of the metadata table; issue titles share the same visual scale as data labels.
 
@@ -376,7 +377,7 @@ Covers protected `/api/me/*` endpoints. Created with typed wrappers:
 - `fetchWishlist`, `addToWishlist`, `removeFromWishlist` → `/api/me/wishlist/*`
 - `fetchFavorites`, `addToFavorites`, `removeFromFavorites` → `/api/me/favorites/*`
 
-> `CollectionItemDto`, `WishlistItemDto`, `FavoriteItemDto` are temporary inline types — replace with generated types after Block B4.
+> `CollectionItemDto`, `WishlistItemDto`, `FavoriteItemDto` were temporary inline types — replaced with generated `components['schemas']` types after Block B4.
 
 ### **[RESOLVED]** G4 · Migration guidance
 
@@ -454,14 +455,14 @@ interface PaginationControlsProps {
 | §2 | Card `border-t` dividers between metadata fields         | `ProductCard.tsx` — removed row borders (A6)                                   | ✅ **[RESOLVED]** |
 | §2 | Dead `<a href="#">` overlay and "Details" anchor         | `ProductCard.tsx` — overlay removed, Details → `<button>` + `useNavigate` (A6) | ✅ **[RESOLVED]** |
 | §2 | Misaligned "Details" button (variable card heights)      | `ProductCard.tsx` flex + `mt-auto` (A6)                                        | ✅ **[RESOLVED]** |
-| §2 | Flat gray image background, no depth                     | `ProductCard.tsx`, `StampContainer.tsx` drop-shadow (F1)                       | ⏳ Outstanding    |
-| §3 | First Day page — large empty space, unbalanced layout    | `FirstDayCollection.tsx` two-column grid (F2)                                  | ⏳ Outstanding    |
-| §3 | First Day page — title same scale as labels              | `FirstDayCollection.tsx` `text-xl font-bold` (F2)                              | ⏳ Outstanding    |
-| §4 | No progress context in collection                        | `MyCollectionPage` progress bar (D2)                                           | ⏳ Block D        |
-| §4 | No filters (All / Collected / Missing)                   | `MyCollectionPage` filter tabs (D2)                                            | ⏳ Block D        |
-| §4 | No hover states on grayscale stamps                      | `MyCollectionPage` `group-hover` overlays (D2)                                 | ⏳ Block D        |
-| §4 | Empty state for new users                                | `EmptyState` component (D2)                                                    | ⏳ Block D        |
-| §5 | No active NavLink highlight                              | `Header.tsx` `NavLink` active style (A6)                                       | ⏳ Outstanding    |
+| §2 | Flat gray image background, no depth                     | `ProductCard.tsx`, `StampImageCollectionGallery.tsx` drop-shadow + `bg-neutral-800` (F1) | ✅ **[RESOLVED]** |
+| §3 | First Day page — large empty space, unbalanced layout    | `FirstDayCollection.tsx` two-column grid (F2)                                  | ✅ **[RESOLVED]** |
+| §3 | First Day page — title same scale as labels              | `FirstDayCollection.tsx` `text-xl font-bold` + `text-gray-400` labels (F2)    | ✅ **[RESOLVED]** |
+| §4 | No progress context in collection                        | `MyCollectionPage` progress bar, year grouping (D2)                            | ✅ **[RESOLVED]** |
+| §4 | No filters (All / Collected / Missing)                   | `MyCollectionPage` filter tabs (D2)                                            | ⏳ Partially — year grouping done, tab filter deferred |
+| §4 | No hover states on grayscale stamps                      | `MyCollectionPage` `group-hover` overlays (D2)                                 | ⏳ Deferred       |
+| §4 | Empty state for new users                                | `EmptyState` component (D2–D4)                                                 | ✅ **[RESOLVED]** |
+| §5 | No active NavLink highlight                              | `Header.tsx` `NavLink` active style callback (E3)                              | ✅ **[RESOLVED]** |
 | §5 | Footer input/button height mismatch + wrong element type | `Footer.tsx` `<button>` (F4)                                                   | ✅ **[RESOLVED]** |
 | §5 | Footer brand link not a React Router `<Link>`            | `Footer.tsx` (F3)                                                              | ✅ **[RESOLVED]** |
 | §6 | No landing / welcome page                                | `LandingPage` (A3)                                                             | ✅ **[RESOLVED]** |
@@ -477,17 +478,12 @@ interface PaginationControlsProps {
 ✅ A1 → A2               (backend contract for year endpoints — DONE)
 ✅ A3 → A4 → A5 → A6    (frontend catalog pages — DONE)
 ⏳ H1 → H2 → H3          (pagination — backend Pageable required first)
-⏳ B1 → B2 → B3 → B4    (backend user slices + contract)
-⏳ C1 → C2 → C3 → C4    (frontend Redux slices; C4 requires C1–C3 done first)
-⏳ D1 → D2 → D3 → D4    (protected pages)
-⏳ E1 → E2 → E3          (catalog action icons + routing)
-⏳ F1 → F2               (standalone UX polish — no dependencies)
+✅ B1 → B2 → B3 → B4    (backend user slices + contract — DONE)
+✅ C1 → C2 → C3 → C4    (frontend Redux slices + auth bootstrap — DONE)
+✅ D1 → D2 → D3 → D4    (protected pages — DONE)
+✅ E1 → E2 → E3          (catalog action icons + routing + NavLink highlight — DONE)
+✅ F1 → F2               (UX polish — DONE)
 ✅ F3 → F4               (brand name + footer fixes — DONE)
 ```
 
-Block G has no external dependencies — do it first.
-Blocks A and B can be worked on in parallel (frontend / backend split).
-Block C depends on B4 (generated types) and must complete before D and E.
-Block H (pagination) backend side must land alongside or before A1.
-Block F has no dependencies — each step is an isolated visual fix.
 

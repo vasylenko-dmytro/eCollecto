@@ -67,13 +67,28 @@ export default function Header({onSearch}: { onSearch: (term: string) => void })
         {/* Navigation Links */}
         <div className={`${isOpen ? 'block' : 'hidden'} transition-all duration-300 basis-full grow md:block`}>
           <div className="py-2 md:py-0 flex flex-col md:flex-row md:items-center md:justify-end gap-1">
-            <NavLink className="p-2 text-sm text-gray-800 dark:text-neutral-200 hover:text-gray-500" to="/stamps">
+            <NavLink
+              className={({ isActive }) =>
+                `p-2 text-sm hover:text-gray-500 ${isActive ? 'text-yellow-500 dark:text-yellow-400 font-medium' : 'text-gray-800 dark:text-neutral-200'}`
+              }
+              to="/stamps"
+            >
               Catalog
             </NavLink>
-            <NavLink className="p-2 text-sm text-gray-800 dark:text-neutral-200 hover:text-gray-500" to="/firstday">
+            <NavLink
+              className={({ isActive }) =>
+                `p-2 text-sm hover:text-gray-500 ${isActive ? 'text-yellow-500 dark:text-yellow-400 font-medium' : 'text-gray-800 dark:text-neutral-200'}`
+              }
+              to="/firstday"
+            >
               First day of issue
             </NavLink>
-            <NavLink className="p-2 text-sm text-gray-800 dark:text-neutral-200 hover:text-gray-500" to="/collection">
+            <NavLink
+              className={({ isActive }) =>
+                `p-2 text-sm hover:text-gray-500 ${isActive ? 'text-yellow-500 dark:text-yellow-400 font-medium' : 'text-gray-800 dark:text-neutral-200'}`
+              }
+              to="/collection"
+            >
               Collection
             </NavLink>
 
