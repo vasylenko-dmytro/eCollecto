@@ -1,7 +1,37 @@
 import { z } from "zod";
 
+const AddWishlistItemRequest = z
+  .object({ stampId: z.string().min(1) })
+  .passthrough();
+const AddFavoriteItemRequest = z
+  .object({ stampId: z.string().min(1) })
+  .passthrough();
+const AddCollectionItemRequest = z
+  .object({ stampId: z.string().min(1) })
+  .passthrough();
 const ErrorResponse = z
   .object({ message: z.string(), code: z.string(), status: z.number().int() })
+  .partial()
+  .passthrough();
+const WishlistItemDto = z
+  .object({
+    stampId: z.string(),
+    addedAt: z.string().datetime({ offset: true }),
+  })
+  .partial()
+  .passthrough();
+const FavoriteItemDto = z
+  .object({
+    stampId: z.string(),
+    addedAt: z.string().datetime({ offset: true }),
+  })
+  .partial()
+  .passthrough();
+const CollectionItemDto = z
+  .object({
+    stampId: z.string(),
+    addedAt: z.string().datetime({ offset: true }),
+  })
   .partial()
   .passthrough();
 const TariffsDto = z
@@ -88,7 +118,13 @@ const DesignerDto = z
   .passthrough();
 
 export const schemas = {
+  AddWishlistItemRequest,
+  AddFavoriteItemRequest,
+  AddCollectionItemRequest,
   ErrorResponse,
+  WishlistItemDto,
+  FavoriteItemDto,
+  CollectionItemDto,
   TariffsDto,
   StampMeta,
   StampRelease,

@@ -2,6 +2,7 @@ package com.vasylenko.ecollectobackend.common.exception;
 
 import com.vasylenko.ecollectobackend.dto.ErrorResponse;
 import org.springframework.http.HttpStatus;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
@@ -12,6 +13,19 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    /**
+     * Handles ConflictException and returns 409 status
+     */
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ErrorResponse> handleConflictException(ConflictException e) {
+        ErrorResponse error = ErrorResponse.builder()
+                .message(e.getMessage())
+                .code("CONFLICT")
+                .status(HttpStatus.CONFLICT.value())
+                .build();
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
 
     /**
      * Handles NotFoundException and returns 404 status

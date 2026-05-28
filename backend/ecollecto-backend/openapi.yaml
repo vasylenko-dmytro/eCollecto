@@ -17,9 +17,153 @@ tags:
   description: User profile endpoints (protected - requires Bearer JWT).
 - name: Tariffs
   description: Tariff lookup endpoints.
+- name: Collection
+  description: User collection endpoints (protected - requires Bearer JWT).
 - name: Stamps
   description: Stamp lookup endpoints.
+- name: Favorites
+  description: User favorites endpoints (protected - requires Bearer JWT).
+- name: Wishlist
+  description: User wishlist endpoints (protected - requires Bearer JWT).
 paths:
+  /api/me/wishlist/items:
+    post:
+      tags:
+      - Wishlist
+      summary: Add to wishlist
+      description: Adds a stamp to the authenticated user's wishlist.
+      operationId: addToWishlist
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddWishlistItemRequest"
+        required: true
+      responses:
+        "201":
+          description: Stamp added to wishlist.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/WishlistItemDto"
+        "400":
+          description: Invalid request body.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Missing or invalid JWT token.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Insufficient permissions.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Stamp already on wishlist.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+      - bearerAuth: []
+  /api/me/favorites/items:
+    post:
+      tags:
+      - Favorites
+      summary: Add to favorites
+      description: Adds a stamp to the authenticated user's favorites.
+      operationId: addToFavorites
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddFavoriteItemRequest"
+        required: true
+      responses:
+        "201":
+          description: Stamp added to favorites.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/FavoriteItemDto"
+        "400":
+          description: Invalid request body.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Missing or invalid JWT token.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Insufficient permissions.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Stamp already in favorites.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+      - bearerAuth: []
+  /api/me/collection/items:
+    post:
+      tags:
+      - Collection
+      summary: Add to collection
+      description: Adds a stamp to the authenticated user's collection.
+      operationId: addToCollection
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddCollectionItemRequest"
+        required: true
+      responses:
+        "201":
+          description: Stamp added to collection.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CollectionItemDto"
+        "400":
+          description: Invalid request body.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Missing or invalid JWT token.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Insufficient permissions.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Stamp already in collection.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+      - bearerAuth: []
   /api/tariffs:
     get:
       tags:
@@ -324,6 +468,96 @@ paths:
                 $ref: "#/components/schemas/ErrorResponse"
       security:
       - bearerAuth: []
+  /api/me/wishlist:
+    get:
+      tags:
+      - Wishlist
+      summary: Get wishlist
+      description: Returns all stamps on the authenticated user's wishlist.
+      operationId: getWishlist
+      responses:
+        "200":
+          description: Wishlist retrieved.
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/WishlistItemDto"
+        "401":
+          description: Missing or invalid JWT token.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Insufficient permissions.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+      - bearerAuth: []
+  /api/me/favorites:
+    get:
+      tags:
+      - Favorites
+      summary: Get favorites
+      description: Returns all stamps in the authenticated user's favorites.
+      operationId: getFavorites
+      responses:
+        "200":
+          description: Favorites retrieved.
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/FavoriteItemDto"
+        "401":
+          description: Missing or invalid JWT token.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Insufficient permissions.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+      - bearerAuth: []
+  /api/me/collection:
+    get:
+      tags:
+      - Collection
+      summary: Get collection
+      description: Returns all stamps in the authenticated user's collection.
+      operationId: getCollection
+      responses:
+        "200":
+          description: Collection retrieved.
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CollectionItemDto"
+        "401":
+          description: Missing or invalid JWT token.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Insufficient permissions.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+      - bearerAuth: []
   /api/first-day-covers:
     get:
       tags:
@@ -480,6 +714,114 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+  /api/me/wishlist/items/{stampId}:
+    delete:
+      tags:
+      - Wishlist
+      summary: Remove from wishlist
+      description: Removes a stamp from the authenticated user's wishlist.
+      operationId: removeFromWishlist
+      parameters:
+      - name: stampId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: Stamp removed from wishlist.
+        "401":
+          description: Missing or invalid JWT token.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Insufficient permissions.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Stamp not on wishlist.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+      - bearerAuth: []
+  /api/me/favorites/items/{stampId}:
+    delete:
+      tags:
+      - Favorites
+      summary: Remove from favorites
+      description: Removes a stamp from the authenticated user's favorites.
+      operationId: removeFromFavorites
+      parameters:
+      - name: stampId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: Stamp removed from favorites.
+        "401":
+          description: Missing or invalid JWT token.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Insufficient permissions.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Stamp not in favorites.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+      - bearerAuth: []
+  /api/me/collection/items/{stampId}:
+    delete:
+      tags:
+      - Collection
+      summary: Remove from collection
+      description: Removes a stamp from the authenticated user's collection.
+      operationId: removeFromCollection
+      parameters:
+      - name: stampId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: Stamp removed from collection.
+        "401":
+          description: Missing or invalid JWT token.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Insufficient permissions.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Stamp not in collection.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+      - bearerAuth: []
 components:
   schemas:
     ErrorResponse:
@@ -496,6 +838,75 @@ components:
           type: integer
           format: int32
           description: HTTP status code.
+    AddWishlistItemRequest:
+      type: object
+      description: Request body to add a stamp to the user's wishlist.
+      properties:
+        stampId:
+          type: string
+          description: Stamp ID to add.
+          example: stamp-2024-001
+          minLength: 1
+      required:
+      - stampId
+    WishlistItemDto:
+      type: object
+      description: A stamp on the user's wishlist.
+      properties:
+        stampId:
+          type: string
+          description: Stamp ID (references stamps._id).
+          example: stamp-2024-001
+        addedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the stamp was added to the wishlist.
+    AddFavoriteItemRequest:
+      type: object
+      description: Request body to add a stamp to the user's favorites.
+      properties:
+        stampId:
+          type: string
+          description: Stamp ID to add.
+          example: stamp-2024-001
+          minLength: 1
+      required:
+      - stampId
+    FavoriteItemDto:
+      type: object
+      description: A stamp in the user's favorites.
+      properties:
+        stampId:
+          type: string
+          description: Stamp ID (references stamps._id).
+          example: stamp-2024-001
+        addedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the stamp was added to favorites.
+    AddCollectionItemRequest:
+      type: object
+      description: Request body to add a stamp to the user's collection.
+      properties:
+        stampId:
+          type: string
+          description: Stamp ID to add.
+          example: stamp-2024-001
+          minLength: 1
+      required:
+      - stampId
+    CollectionItemDto:
+      type: object
+      description: A stamp in the user's collection.
+      properties:
+        stampId:
+          type: string
+          description: Stamp ID (references stamps._id).
+          example: stamp-2024-001
+        addedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the stamp was added to the collection.
     TariffsDto:
       type: object
       description: Postal tariff listing by year and currency.

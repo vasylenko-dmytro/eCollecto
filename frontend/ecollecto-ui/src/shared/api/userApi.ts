@@ -2,22 +2,9 @@ import { apiFetch } from './apiClient';
 import type { components } from '../../features/product/types/api.generated';
 
 type UserDto = components['schemas']['UserDto'];
-
-// TODO (Block B): replace with generated types after backend adds
-//   CollectionItemDocument / WishlistItemDocument / FavoriteDocument endpoints
-//   and openapi.yaml + api.generated.ts are regenerated.
-export interface CollectionItemDto {
-  stampId: string;
-  addedAt: string;
-}
-export interface WishlistItemDto {
-  stampId: string;
-  addedAt: string;
-}
-export interface FavoriteItemDto {
-  stampId: string;
-  addedAt: string;
-}
+type CollectionItemDto = components['schemas']['CollectionItemDto'];
+type WishlistItemDto = components['schemas']['WishlistItemDto'];
+type FavoriteItemDto = components['schemas']['FavoriteItemDto'];
 
 /* ── User profile ── */
 export const fetchUserProfile = (signal?: AbortSignal) =>

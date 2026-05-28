@@ -12,6 +12,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
 
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.index.Index;
+
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +41,26 @@ public class DataInitializer implements ApplicationRunner {
         seedCollection("migration-data/ua/stamp.json", "stamp");
         seedCollection("migration-data/ua/tariffs.json", "tariffs");
         log.info("DataInitializer: seed complete.");
+
+        log.info("DataInitializer: creating compound indexes (V002)...");
+        createUserStampIndex("user_collections");
+        createUserStampIndex("user_wishlists");
+        createUserStampIndex("user_favorites");
+        log.info("DataInitializer: indexes ready.");
+    }
+
+    /**
+     * Idempotent: MongoDB createIndex is a no-op if an index with the same
+     * key pattern and options already exists.
+     */
+    private void createUserStampIndex(String collectionName) {
+        mongoTemplate.indexOps(collectionName)
+                .createIndex(new Index()
+                        .on("userId", Sort.Direction.ASC)
+                        .on("stampId", Sort.Direction.ASC)
+                        .unique()
+                        .named("userId_stampId_unique"));
+        log.info("DataInitializer: index ready on '{}'", collectionName);
     }
 
     private void seedCollection(String classpathResource, String collectionName) throws Exception {
