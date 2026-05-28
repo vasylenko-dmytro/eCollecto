@@ -34,7 +34,9 @@ public class DataInitializer implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
         log.info("DataInitializer: starting seed...");
         seedCollection("migration-data/ua/designers.json", "designers");
+        seedCollection("migration-data/ua/first_day_covers.json", "first_day_covers");
         seedCollection("migration-data/ua/stamp.json", "stamp");
+        seedCollection("migration-data/ua/tariffs.json", "tariffs");
         log.info("DataInitializer: seed complete.");
     }
 
