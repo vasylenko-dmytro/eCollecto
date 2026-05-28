@@ -134,7 +134,7 @@ describe('ProductPage', () => {
       );
       renderProductPage('stamp-abc');
       await waitFor(() => {
-        expect(screen.getByText(/Failed to load product \(500\)/i)).toBeInTheDocument();
+        expect(screen.getByText(/HTTP 500/i)).toBeInTheDocument();
       });
     });
 
@@ -161,7 +161,7 @@ describe('ProductPage', () => {
       );
       renderProductPage('stamp-abc');
       await waitFor(() => {
-        expect(screen.getByText(/Failed to load product \(503\)/i)).toBeInTheDocument();
+        expect(screen.getByText(/HTTP 503/i)).toBeInTheDocument();
       });
     });
   });

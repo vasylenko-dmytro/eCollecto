@@ -161,7 +161,7 @@ describe('HomePage', () => {
       );
       renderHomePage();
       await waitFor(() => {
-        expect(screen.getByText(/Failed to load products/i)).toBeInTheDocument();
+        expect(screen.getByText(/HTTP 500/i)).toBeInTheDocument();
       });
     });
 
@@ -180,7 +180,7 @@ describe('HomePage', () => {
       );
       renderHomePage();
       await waitFor(() => {
-        expect(screen.getByText(/Failed to load products \(503\)/i)).toBeInTheDocument();
+        expect(screen.getByText(/HTTP 503/i)).toBeInTheDocument();
       });
     });
 

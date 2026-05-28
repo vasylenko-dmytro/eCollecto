@@ -133,7 +133,7 @@ describe('FirstDayPage', () => {
       );
       renderFirstDayPage();
       await waitFor(() => {
-        expect(screen.getByText(/Failed to load first day covers \(404\)/i)).toBeInTheDocument();
+        expect(screen.getByText(/HTTP 404/i)).toBeInTheDocument();
       });
     });
 
