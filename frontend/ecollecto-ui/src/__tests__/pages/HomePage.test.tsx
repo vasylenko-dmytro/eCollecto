@@ -2,6 +2,18 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import HomePage from '../../pages/Home/HomePage';
 
+// Mock ProductCard so tests stay focused on page-level behaviour
+// (ProductCard uses Redux + OIDC hooks that require extra providers)
+vi.mock('../../features/product', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../../features/product')>();
+  return {
+    ...actual,
+    ProductCard: ({ product }: { product: { name: string } }) => (
+      <div data-testid="product-card">{product.name}</div>
+    ),
+  };
+});
+
 // Mock formatStampValue so ProductCard doesn't need a fetch for tariffs
 vi.mock('../../shared/utils/stampHelpers', () => ({
   formatStampValue: vi.fn().mockResolvedValue('12.00 UAH'),
